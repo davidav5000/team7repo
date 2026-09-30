@@ -1,0 +1,432 @@
+TEAM 7 GIT WORKFLOW REFERENCE
+Campus Activities Web App
+
+PURPOSE
+Use this workflow so nobody accidentally works directly on main or overwrites someone else's work.
+
+MAIN RULE
+Do not do development work directly on the main branch.
+
+
+--------------------------------------------------
+CHECK WHICH BRANCH YOU ARE ON
+--------------------------------------------------
+
+Before you start working, committing, or pushing, check your current branch:
+
+    git branch
+
+The branch with the * next to it is the branch you are currently on.
+
+Example:
+
+      feature-comments
+    * feature-map
+      main
+
+In this example, you are currently on:
+
+    feature-map
+
+You can also use:
+
+    git status
+
+Near the top, Git will say:
+
+    On branch feature-map
+
+BEFORE PUSHING, ALWAYS CHECK:
+
+    git branch
+    git status
+
+This helps prevent accidentally pushing from the wrong branch.
+
+--------------------------------------------------
+SWITCH BETWEEN BRANCHES
+--------------------------------------------------
+
+To switch to an existing branch:
+
+    git switch branch-name
+
+Example:
+
+    git switch feature-comments
+
+To switch back to main:
+
+    git switch main
+
+If the branch exists on GitHub but not yet on your computer, first update your remote branch list:
+
+    git fetch
+
+Then create a local branch that tracks the remote branch:
+
+    git switch --track origin/feature-comments
+
+After switching, verify:
+
+    git branch
+
+or:
+
+    git status
+
+--------------------------------------------------
+CHECK WHERE YOUR PUSH WILL GO
+--------------------------------------------------
+
+To see the remote branches and tracking information:
+
+    git branch -vv
+
+Example:
+
+    * feature-comments  abc1234 [origin/feature-comments] Add comments
+      main              def5678 [origin/main] Update main
+
+This means your local feature-comments branch is connected to:
+
+    origin/feature-comments
+
+To see the repository remote itself:
+
+    git remote -v
+
+For normal team work, the remote should be:
+
+    origin  https://github.com/davidav5000/team7repo.git
+
+When you run:
+
+    git push
+
+Git normally pushes your current local branch to the remote branch it is tracking.
+
+If you are unsure, use the explicit form:
+
+    git push origin feature-comments
+
+IMPORTANT:
+Do not push a feature branch to main manually.
+
+Avoid commands like:
+
+    git push origin feature-comments:main
+
+Your normal feature push should look like:
+
+    git push origin feature-comments
+
+or, after tracking is set:
+
+    git push
+
+The normal workflow is:
+
+    main
+      ↓
+    create feature branch
+      ↓
+    make changes
+      ↓
+    commit changes
+      ↓
+    push feature branch
+      ↓
+    create Pull Request
+      ↓
+    merge Pull Request into main
+      ↓
+    feature branch is deleted automatically
+
+--------------------------------------------------
+1. START FROM THE LATEST MAIN
+--------------------------------------------------
+
+Before beginning new work:
+
+    git switch main
+    git pull origin main
+
+This makes sure your local copy includes the newest work from everyone else.
+
+--------------------------------------------------
+2. CREATE A NEW FEATURE BRANCH
+--------------------------------------------------
+
+Create a branch for the specific thing you are working on.
+
+Example:
+
+    git switch -c feature-comments
+
+Other examples:
+
+    feature-ui-feed
+    feature-ui-post
+    feature-database
+    feature-comments
+    feature-map
+    feature-search
+
+Use a branch name that clearly describes your task.
+
+IMPORTANT:
+Always create the new branch AFTER switching to and updating main.
+
+--------------------------------------------------
+3. DO YOUR WORK
+--------------------------------------------------
+
+Make your code changes normally.
+
+Check what Git sees:
+
+    git status
+
+You can run this at any time.
+
+--------------------------------------------------
+4. STAGE AND COMMIT YOUR WORK
+--------------------------------------------------
+
+Stage the files you want to commit:
+
+    git add .
+
+Check them:
+
+    git status
+
+Commit them:
+
+    git commit -m "Add activity comments"
+
+Use a short message describing what the commit actually does.
+
+--------------------------------------------------
+5. PUSH YOUR FEATURE BRANCH
+--------------------------------------------------
+
+The first time you push a new branch:
+
+    git push -u origin feature-comments
+
+After that, while staying on the same branch, you can usually just use:
+
+    git push
+
+DO NOT switch to main and push your unfinished work there.
+
+--------------------------------------------------
+6. CREATE A PULL REQUEST
+--------------------------------------------------
+
+On GitHub:
+
+1. Open the team7repo repository.
+2. GitHub will usually show your recently pushed branch.
+3. Click "Compare & pull request."
+4. Make sure:
+
+       base: main
+       compare: feature-comments
+
+5. Give the Pull Request a useful title.
+6. Create the Pull Request.
+7. Review the changed files.
+8. Merge the Pull Request into main.
+
+If the repository rules are configured correctly, GitHub will prevent direct development pushes to main and require this Pull Request step.
+
+--------------------------------------------------
+7. AFTER THE PULL REQUEST IS MERGED
+--------------------------------------------------
+
+Return your local copy to main:
+
+    git switch main
+
+Update it:
+
+    git pull origin main
+
+Your feature is now part of main.
+
+If GitHub is configured to automatically delete merged branches, the remote feature branch will disappear after the merge.
+
+You can remove the old local branch with:
+
+    git branch -d feature-comments
+
+--------------------------------------------------
+COMPLETE EXAMPLE
+--------------------------------------------------
+
+TASK:
+Add comments/replies to activity posts.
+
+Start from current main:
+
+    git switch main
+    git pull origin main
+
+Create your branch:
+
+    git switch -c feature-comments
+
+Make your changes.
+
+Check your work:
+
+    git status
+
+Stage and commit:
+
+    git add .
+    git commit -m "Add activity comment support"
+
+Push your branch:
+
+    git push -u origin feature-comments
+
+Then go to GitHub and create:
+
+    feature-comments -> main
+
+Pull Request
+
+Merge the Pull Request.
+
+Then update your local main:
+
+    git switch main
+    git pull origin main
+
+Delete the old local branch if finished:
+
+    git branch -d feature-comments
+
+DONE.
+
+--------------------------------------------------
+IF YOU NEED TO MAKE MORE CHANGES BEFORE MERGING
+--------------------------------------------------
+
+Stay on your feature branch.
+
+Example:
+
+    git switch feature-comments
+
+Make the fixes.
+
+Then:
+
+    git add .
+    git commit -m "Fix comment validation"
+    git push
+
+The existing Pull Request will automatically update with the new commits.
+
+Do NOT create a second Pull Request for the same branch unless there is a specific reason.
+
+--------------------------------------------------
+IF SOMEONE ELSE CHANGED MAIN WHILE YOU WERE WORKING
+--------------------------------------------------
+
+Before merging, update your feature branch with the newest main.
+
+First:
+
+    git switch main
+    git pull origin main
+
+Then:
+
+    git switch feature-comments
+    git merge main
+
+If there are no conflicts, test your code and push:
+
+    git push
+
+If Git reports a merge conflict, stop and resolve the conflict carefully before committing.
+
+Ask the team for help if you are unsure.
+
+--------------------------------------------------
+IMPORTANT SAFETY RULES
+--------------------------------------------------
+
+1. Do not develop directly on main.
+
+2. Do not use:
+
+       git push --force
+
+   unless the team specifically agrees and someone experienced is helping.
+
+3. Before starting a new feature:
+
+       git switch main
+       git pull origin main
+
+4. Keep one feature/task per branch when practical.
+
+5. Before committing:
+
+       git status
+
+6. Before pushing:
+
+       git status
+
+7. Use Pull Requests to put completed work into main.
+
+8. If Git shows a conflict or an error you do not understand, stop before trying random commands.
+
+9. Never commit passwords, API keys, database passwords, or .env files containing real secrets.
+
+--------------------------------------------------
+QUICK REFERENCE
+--------------------------------------------------
+
+START NEW WORK:
+
+    git switch main
+    git pull origin main
+    git switch -c feature-name
+
+SAVE WORK:
+
+    git add .
+    git commit -m "Describe the work"
+
+PUSH FIRST TIME:
+
+    git push -u origin feature-name
+
+PUSH LATER COMMITS:
+
+    git push
+
+AFTER PR IS MERGED:
+
+    git switch main
+    git pull origin main
+    git branch -d feature-name
+
+--------------------------------------------------
+REMEMBER
+--------------------------------------------------
+
+MAIN = stable shared version
+
+FEATURE BRANCH = your workspace
+
+PULL REQUEST = how your finished work gets into main
