@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Activity · Campus Activities</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="inner">
-        <a class="brand" href="/">Campus Activities</a>
+        <a class="brand" href="index.html">Campus Activities</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Feed</a>
-          <a href="/activity-new.html">Create</a>
-          <a href="/profile.html">Profile</a>
+          <a href="index.html">Feed</a>
+          <a href="activity-new.html">Create</a>
+          <a href="profile.html">Profile</a>
           <form method="post" action="/logout">
             <button class="btn-link" type="submit">Log out</button>
           </form>
@@ -23,7 +23,7 @@
 
     <!-- URL: /activity.html?id=123  → GET /activities/123 -->
     <main>
-      <p class="small"><a href="/">← Back to feed</a></p>
+      <p class="small"><a href="index.html">← Back to feed</a></p>
 
       <div class="alert" id="activity-error" role="alert"></div>
 
@@ -49,7 +49,7 @@
 
             <!-- Show only when the logged-in user is the creator. -->
             <div class="owner-actions" id="owner-actions">
-              <a class="btn btn-secondary" href="/activity-edit.html?id=1">Edit</a>
+              <a class="btn btn-secondary" href="activity-edit.html?id=1">Edit</a>
               <!-- DELETE /activities/:id -->
               <button class="btn btn-danger" type="button" id="delete-activity">
                 Delete

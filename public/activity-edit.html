@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Edit Activity · Campus Activities</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="inner">
-        <a class="brand" href="/">Campus Activities</a>
+        <a class="brand" href="index.html">Campus Activities</a>
         <nav class="nav" aria-label="Main">
-          <a href="/">Feed</a>
-          <a href="/activity-new.html">Create</a>
-          <a href="/profile.html">Profile</a>
+          <a href="index.html">Feed</a>
+          <a href="activity-new.html">Create</a>
+          <a href="profile.html">Profile</a>
           <form method="post" action="/logout">
             <button class="btn-link" type="submit">Log out</button>
           </form>
@@ -25,7 +25,7 @@
          Load: GET /activities/123 → prefill fields.
          Save: PUT /activities/123 (owner only) via fetch. Plain HTML forms can't send PUT. -->
     <main class="medium">
-      <p class="small"><a href="/activity.html?id=1">← Back to activity</a></p>
+      <p class="small"><a href="activity.html?id=1">← Back to activity</a></p>
 
       <div class="card">
         <h1>Edit activity</h1>
@@ -106,7 +106,7 @@ Casual 5v5, all skill levels. Bring water and cleats if you have them.</textarea
 
           <div class="form-actions">
             <button class="btn" type="submit">Save changes</button>
-            <a class="btn btn-secondary" href="/activity.html?id=1">Cancel</a>
+            <a class="btn btn-secondary" href="activity.html?id=1">Cancel</a>
           </div>
         </form>
       </div>
