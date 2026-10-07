@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log in · Campus Activities</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a class="brand" href="index.html">Campus Activities</a>
+        <nav class="nav" aria-label="Main">
+          <a href="index.html">Feed</a>
+          <a href="login.html" aria-current="page">Log in</a>
+          <a href="register.html">Register</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="narrow">
+      <div class="card">
+        <h1>Log in</h1>
+
+        <div class="alert" id="login-error" role="alert"></div>
+
+        <!-- POST /login  body: { username, password } -->
+        <form id="login-form" method="post" action="/login">
+          <div class="form-field">
+            <label for="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <button class="btn btn-block" type="submit">Log in</button>
+        </form>
+
+        <p class="small muted">
+          New here? <a href="register.html">Create an account</a>
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">Campus Activities · Team 7</footer>
+  </body>
+</html>
