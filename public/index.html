@@ -3,10 +3,94 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Campus Activities</title>
+    <title>Activity Feed · Campus Activities</title>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
-    <h1>Campus Activities</h1>
-    <p>Foundation running. Feed coming in Stage 3.</p>
+    <header class="site-header">
+      <div class="inner">
+        <a class="brand" href="/">Campus Activities</a>
+        <nav class="nav" aria-label="Main">
+          <a href="/" aria-current="page">Feed</a>
+          <a href="/activity-new.html">Create</a>
+          <a href="/profile.html">Profile</a>
+          <a href="/login.html">Log in</a>
+          <a href="/register.html">Register</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="page-head">
+        <h1>Activity Feed</h1>
+        <a class="btn" href="/activity-new.html">+ New activity</a>
+      </div>
+
+      <!-- Phase 2: search/filters. Placeholder only. -->
+      <form class="toolbar" id="search-form" role="search">
+        <input
+          type="search"
+          name="q"
+          placeholder="Search activities (coming in Phase 2)"
+          disabled
+        />
+        <button class="btn btn-secondary" type="submit" disabled>Search</button>
+      </form>
+
+      <div class="alert" id="feed-error" role="alert"></div>
+
+      <!-- GET /activities fills this list. Sample cards below show the markup. -->
+      <ul class="feed" id="activity-feed">
+        <li class="card activity-card" data-activity-id="1">
+          <h2><a href="/activity.html?id=1">Pickup Soccer on the Quad</a></h2>
+          <ul class="meta">
+            <li>📅 Fri, Oct 10 · 4:00 PM</li>
+            <li>📍 Main Quad</li>
+            <li>👤 Hosted by jdoe</li>
+          </ul>
+          <p>Casual 5v5, all skill levels. Bring water and cleats if you have them.</p>
+          <div class="card-foot">
+            <span class="badge">8 going</span>
+            <a href="/activity.html?id=1">View details →</a>
+          </div>
+        </li>
+
+        <li class="card activity-card" data-activity-id="2">
+          <h2><a href="/activity.html?id=2">Study Group: Data Structures Midterm</a></h2>
+          <ul class="meta">
+            <li>📅 Mon, Oct 13 · 7:00 PM</li>
+            <li>📍 Library, Room 204</li>
+            <li>👤 Hosted by rex_o</li>
+          </ul>
+          <p>Going through practice problems on trees and graphs. Whiteboard reserved.</p>
+          <div class="card-foot">
+            <span class="badge">3 going</span>
+            <a href="/activity.html?id=2">View details →</a>
+          </div>
+        </li>
+
+        <li class="card activity-card" data-activity-id="3">
+          <h2><a href="/activity.html?id=3">Board Game Night</a></h2>
+          <ul class="meta">
+            <li>📅 Wed, Oct 15 · 8:00 PM</li>
+            <li>📍 Student Union, Lounge B</li>
+            <li>👤 Hosted by davidv</li>
+          </ul>
+          <p>Catan, Codenames, and whatever you bring. Snacks provided.</p>
+          <div class="card-foot">
+            <span class="badge">12 going</span>
+            <a href="/activity.html?id=3">View details →</a>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Show when the feed is empty. -->
+      <div class="card empty-state" id="feed-empty" hidden>
+        <p>No activities yet.</p>
+        <a class="btn" href="/activity-new.html">Create the first one</a>
+      </div>
+    </main>
+
+    <footer class="site-footer">Campus Activities · Team 7</footer>
   </body>
 </html>

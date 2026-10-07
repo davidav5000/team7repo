@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register · Campus Activities</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a class="brand" href="/">Campus Activities</a>
+        <nav class="nav" aria-label="Main">
+          <a href="/">Feed</a>
+          <a href="/login.html">Log in</a>
+          <a href="/register.html" aria-current="page">Register</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="narrow">
+      <div class="card">
+        <h1>Create an account</h1>
+        <p class="muted small">Join to post activities, RSVP, and comment.</p>
+
+        <div class="alert" id="register-error" role="alert"></div>
+
+        <!-- POST /register  body: { name, username, contactInfo, password } -->
+        <form id="register-form" method="post" action="/register">
+          <div class="form-field">
+            <label for="name">Full name</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              maxlength="100"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              minlength="3"
+              maxlength="30"
+              pattern="[A-Za-z0-9_]+"
+              autocomplete="username"
+              required
+            />
+            <p class="hint">3–30 characters: letters, numbers, underscores.</p>
+          </div>
+
+          <div class="form-field">
+            <label for="contactInfo">Contact info</label>
+            <input
+              id="contactInfo"
+              name="contactInfo"
+              type="text"
+              minlength="3"
+              maxlength="255"
+              placeholder="Email or phone"
+              autocomplete="email"
+              required
+            />
+            <p class="hint">Kept private. Not shown to other students.</p>
+          </div>
+
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              minlength="8"
+              maxlength="72"
+              autocomplete="new-password"
+              required
+            />
+            <p class="hint">At least 8 characters.</p>
+          </div>
+
+          <button class="btn btn-block" type="submit">Register</button>
+        </form>
+
+        <p class="small muted">
+          Already have an account? <a href="/login.html">Log in</a>
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">Campus Activities · Team 7</footer>
+  </body>
+</html>
