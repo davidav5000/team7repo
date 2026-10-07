@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Activity · Campus Activities</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a class="brand" href="index.html">Campus Activities</a>
+        <nav class="nav" aria-label="Main">
+          <a href="index.html">Feed</a>
+          <a href="activity-new.html">Create</a>
+          <a href="profile.html">Profile</a>
+          <form method="post" action="/logout">
+            <button class="btn-link" type="submit">Log out</button>
+          </form>
+        </nav>
+      </div>
+    </header>
+
+    <!-- URL: /activity.html?id=123  → GET /activities/123 -->
+    <main>
+      <p class="small"><a href="index.html">← Back to feed</a></p>
+
+      <div class="alert" id="activity-error" role="alert"></div>
+
+      <div class="detail-grid">
+        <!-- Left column: activity + discussion -->
+        <div>
+          <article class="card" id="activity-detail" data-activity-id="1">
+            <h1 id="activity-title">Pickup Soccer on the Quad</h1>
+
+            <dl class="detail-meta">
+              <dt>When</dt>
+              <dd id="activity-when">Friday, October 10 · 4:00 PM</dd>
+              <dt>Where</dt>
+              <dd id="activity-location">Main Quad</dd>
+              <dt>Host</dt>
+              <dd id="activity-host">jdoe</dd>
+            </dl>
+
+            <p id="activity-description">
+              Casual 5v5, all skill levels. Bring water and cleats if you have them. We'll
+              split teams when everyone arrives.
+            </p>
+
+            <!-- Show only when the logged-in user is the creator. -->
+            <div class="owner-actions" id="owner-actions">
+              <a class="btn btn-secondary" href="activity-edit.html?id=1">Edit</a>
+              <!-- DELETE /activities/:id -->
+              <button class="btn btn-danger" type="button" id="delete-activity">
+                Delete
+              </button>
+            </div>
+          </article>
+
+          <section class="card" aria-labelledby="discussion-heading">
+            <h2 id="discussion-heading">Discussion</h2>
+
+            <!-- GET /activities/:id/comments fills this list. -->
+            <ul class="comments" id="comment-list">
+              <li class="comment">
+                <div class="comment-head">
+                  <strong>rex_o</strong>
+                  <span class="muted small">Oct 7 · 2:14 PM</span>
+                </div>
+                <p>Is there a ball or should someone bring one?</p>
+              </li>
+              <li class="comment">
+                <div class="comment-head">
+                  <strong>jdoe</strong>
+                  <span class="muted small">Oct 7 · 2:30 PM</span>
+                </div>
+                <p>I've got two. Just show up!</p>
+              </li>
+            </ul>
+
+            <div class="alert" id="comment-error" role="alert"></div>
+
+            <!-- POST /activities/:id/comments  body: { message } -->
+            <form id="comment-form">
+              <div class="form-field">
+                <label for="message">Add a comment</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  maxlength="2000"
+                  required
+                ></textarea>
+              </div>
+              <button class="btn" type="submit">Post comment</button>
+            </form>
+          </section>
+        </div>
+
+        <!-- Right column: attendance + map -->
+        <aside>
+          <section class="card" aria-labelledby="attendance-heading">
+            <h2 id="attendance-heading">Who's going</h2>
+            <p><span class="badge" id="attendee-count">8 going</span></p>
+
+            <!-- POST /activities/:id/attendance to join; DELETE to withdraw.
+                 Toggle label to "Can't make it" when the user is already going. -->
+            <button class="btn btn-block" type="button" id="attend-toggle">
+              I'm Going
+            </button>
+
+            <ul class="attendee-list" id="attendee-list">
+              <li>jdoe</li>
+              <li>rex_o</li>
+              <li>davidv</li>
+              <li class="muted">+ 5 more</li>
+            </ul>
+          </section>
+
+          <section class="card" aria-labelledby="map-heading">
+            <h2 id="map-heading">Map</h2>
+            <div class="map-placeholder" id="activity-map">Map coming in Phase 2</div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="site-footer">Campus Activities · Team 7</footer>
+  </body>
+</html>
