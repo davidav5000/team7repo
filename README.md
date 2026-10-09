@@ -5,6 +5,7 @@ Student activity forum. Node.js + Express. See `Activities_Web_App_Project_Plan.
 ## Setup
 
 ```
+yo
 npm install
 cp .env.example .env   # set SESSION_SECRET + DATABASE_URL (your pg password/port)
 psql -U postgres -p <port> -c "CREATE DATABASE activities;"
