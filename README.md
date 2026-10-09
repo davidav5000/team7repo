@@ -38,3 +38,4 @@ PostgreSQL via `pg`. Shared pool in `models/db.js`: `db.query(sql, params)` – 
 ## Workflow
 
 Branch per feature area (auth, activities, interaction, discovery); PR into `main`.
+See [WORKFLOW.md](WORKFLOW.md) for the complete workflow and conflict recovery guide.
