@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Activity · Campus Activities</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a class="brand" href="index.html">Campus Activities</a>
+        <nav class="nav" aria-label="Main">
+          <a href="index.html">Feed</a>
+          <a href="activity-new.html">Create</a>
+          <a href="profile.html">Profile</a>
+          <form method="post" action="/logout">
+            <button class="btn-link" type="submit">Log out</button>
+          </form>
+        </nav>
+      </div>
+    </header>
+
+    <!-- URL: /activity-edit.html?id=123
+         Load: GET /activities/123 → prefill fields.
+         Save: PUT /activities/123 (owner only) via fetch. Plain HTML forms can't send PUT. -->
+    <main class="medium">
+      <p class="small"><a href="activity.html?id=1">← Back to activity</a></p>
+
+      <div class="card">
+        <h1>Edit activity</h1>
+
+        <div class="alert" id="activity-error" role="alert"></div>
+
+        <form id="activity-edit-form" data-method="PUT">
+          <div class="form-field">
+            <label for="title">Title</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              maxlength="120"
+              value="Pickup Soccer on the Quad"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="startsAt">Date &amp; time</label>
+              <input
+                id="startsAt"
+                name="startsAt"
+                type="datetime-local"
+                value="2026-10-10T16:00"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="location">Location</label>
+              <input
+                id="location"
+                name="location"
+                type="text"
+                maxlength="200"
+                value="Main Quad"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" required>
+Casual 5v5, all skill levels. Bring water and cleats if you have them.</textarea>
+          </div>
+
+          <fieldset>
+            <legend>Map coordinates (optional)</legend>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="latitude">Latitude</label>
+                <input
+                  id="latitude"
+                  name="latitude"
+                  type="number"
+                  step="any"
+                  min="-90"
+                  max="90"
+                />
+              </div>
+              <div class="form-field">
+                <label for="longitude">Longitude</label>
+                <input
+                  id="longitude"
+                  name="longitude"
+                  type="number"
+                  step="any"
+                  min="-180"
+                  max="180"
+                />
+              </div>
+            </div>
+            <p class="hint">Fill both or neither.</p>
+          </fieldset>
+
+          <div class="form-actions">
+            <button class="btn" type="submit">Save changes</button>
+            <a class="btn btn-secondary" href="activity.html?id=1">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="site-footer">Campus Activities · Team 7</footer>
+  </body>
+</html>
