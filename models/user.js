@@ -2,9 +2,9 @@ const db = require('./db');
 
 async function findByUsername(username) {
   const result = await db.query(
-    `SELECT id, name, username, contact_info, password_hash
+    `SELECT id, name, username, contact AS contact_info, password_hash
      FROM users
-     WHERE username = $1
+     WHERE lower(username) = lower($1)
      LIMIT 1`,
     [username],
   );
@@ -14,9 +14,9 @@ async function findByUsername(username) {
 
 async function create({ name, username, contactInfo, passwordHash }) {
   const result = await db.query(
-    `INSERT INTO users (name, username, contact_info, password_hash)
+    `INSERT INTO users (name, username, contact, password_hash)
      VALUES ($1, $2, $3, $4)
-     RETURNING id, name, username, contact_info`,
+     RETURNING id, name, username, contact AS contact_info`,
     [name, username, contactInfo, passwordHash],
   );
 
@@ -25,7 +25,7 @@ async function create({ name, username, contactInfo, passwordHash }) {
 
 async function findPublicById(id) {
   const result = await db.query(
-    `SELECT id, name, username, contact_info
+    `SELECT id, name, username, contact AS contact_info
      FROM users
      WHERE id = $1
      LIMIT 1`,
