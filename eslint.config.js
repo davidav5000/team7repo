@@ -12,4 +12,11 @@ module.exports = [
     },
     rules: { 'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }] },
   },
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: { ...globals.browser },
+    },
+  },
 ];

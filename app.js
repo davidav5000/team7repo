@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const routes = require('./routes');
+const mapsRouter = require('./routes/maps');
 
 function createApp() {
   const app = express();
@@ -35,6 +36,7 @@ function createApp() {
   );
   app.use(express.static(path.join(__dirname, 'public')));
 
+  app.use('/api/maps', mapsRouter());
   app.use(routes);
 
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));

@@ -4,10 +4,19 @@ const usernameRules = body('username')
   .isString()
   .withMessage('Username is required')
   .trim()
-  .isLength({ min: 3, max: 32 })
-  .withMessage('Username must be between 3 and 32 characters')
-  .matches(/^[A-Za-z0-9_.-]+$/)
-  .withMessage('Username may contain letters, numbers, underscores, periods, and hyphens only');
+  .isLength({ min: 3, max: 30 })
+  .withMessage('Username must be between 3 and 30 characters')
+  .matches(/^[A-Za-z0-9_]+$/)
+  .withMessage('Username may contain letters, numbers, and underscores only');
+
+const loginUsernameRules = body('username')
+  .isString()
+  .withMessage('Username is required')
+  .trim()
+  .notEmpty()
+  .withMessage('Username is required')
+  .isLength({ max: 254 })
+  .withMessage('Username is too long');
 
 const passwordRules = body('password')
   .isString()
@@ -32,7 +41,10 @@ const registerValidation = [
   passwordRules,
 ];
 
-const loginValidation = [usernameRules, body('password').isString().withMessage('Password is required')];
+const loginValidation = [
+  loginUsernameRules,
+  body('password').isString().withMessage('Password is required'),
+];
 
 module.exports = {
   registerValidation,
