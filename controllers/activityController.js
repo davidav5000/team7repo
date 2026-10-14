@@ -17,9 +17,7 @@ function validationFailure(req, res) {
 
 function activityFields(body) {
   const hasCoordinates =
-    body.latitude !== undefined &&
-    body.latitude !== null &&
-    body.latitude !== '';
+    body.latitude !== undefined && body.latitude !== null && body.latitude !== '';
 
   return {
     title: body.title.trim(),
@@ -90,10 +88,11 @@ async function updateActivity(req, res, next) {
       });
     }
 
-    const activity = await Activity.update(
-      req.params.id,
-      activityFields(req.body),
-    );
+    const activity = await Activity.update(req.params.id, activityFields(req.body));
+
+    if (!activity) {
+      return res.status(404).json({ error: 'Activity not found' });
+    }
 
     return res.json({
       activity: {
@@ -122,7 +121,10 @@ async function deleteActivity(req, res, next) {
       });
     }
 
-    await Activity.deleteById(req.params.id);
+    const deleted = await Activity.deleteById(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Activity not found' });
+    }
     return res.status(204).end();
   } catch (err) {
     return next(err);
