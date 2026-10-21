@@ -28,6 +28,8 @@ describe('comment model database contract', () => {
     const [sql, params] = db.query.mock.calls[0];
     expect(sql).toContain('FROM comments c');
     expect(sql).toContain('JOIN users u');
+    expect(sql).toContain('u.avatar_url AS "authorAvatarUrl"');
+    expect(sql).not.toMatch(/contact|password_hash/);
     expect(sql).toContain('c.activity_id = $1');
     expect(sql).toContain('ORDER BY c.created_at ASC, c.id ASC');
     expect(params).toEqual([9]);
@@ -55,6 +57,8 @@ describe('comment model database contract', () => {
 
     const [sql, params] = db.query.mock.calls[0];
     expect(sql).toContain('INSERT INTO comments');
+    expect(sql).toContain('u.avatar_url AS "authorAvatarUrl"');
+    expect(sql).not.toMatch(/contact|password_hash/);
     expect(sql).toContain('JOIN users u');
     expect(params).toEqual([9, 4, 'See you there.']);
     expect(comment.authorUsername).toBe('wolf');

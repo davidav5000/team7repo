@@ -111,11 +111,7 @@ git diff --name-only --diff-filter=U
 Conflict markers look like this:
 
 \`\`\`text
-<<<<<<< HEAD
 your current branch
-=======
-the branch being merged
->>>>>>> branch-name
 \`\`\`
 
 Choose the correct content, remove every marker, save the file, and verify it:

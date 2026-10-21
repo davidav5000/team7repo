@@ -25,7 +25,7 @@ async function create({ name, username, contactInfo, passwordHash }) {
 
 async function findPublicById(id) {
   const result = await db.query(
-    `SELECT id, name, username, contact AS contact_info
+    `SELECT id, name, username, contact AS contact_info, avatar_url AS "avatarUrl"
      FROM users
      WHERE id = $1
      LIMIT 1`,
@@ -35,8 +35,21 @@ async function findPublicById(id) {
   return result.rows[0] || null;
 }
 
+async function updateAvatar(id, avatarUrl) {
+  const result = await db.query(
+    `UPDATE users
+     SET avatar_url = $2
+     WHERE id = $1
+     RETURNING avatar_url AS "avatarUrl"`,
+    [id, avatarUrl],
+  );
+
+  return result.rows[0] || null;
+}
+
 module.exports = {
   findByUsername,
   create,
   findPublicById,
+  updateAvatar,
 };

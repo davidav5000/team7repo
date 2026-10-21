@@ -36,25 +36,30 @@ describe('comment routes and controller', () => {
     app = createTestApp();
   });
 
-  test('GET returns comments for an activity', async () => {
-    Activity.findById.mockResolvedValue({ id: 9 });
-    Comment.listByActivity.mockResolvedValue([
-      {
-        id: 1,
-        activityId: 9,
-        authorId: 4,
-        authorUsername: 'wolf',
-        message: 'See you there.',
-      },
-    ]);
+  test.each(['https://example.com/wolf.jpg', null])(
+    'GET returns comments with avatar %s',
+    async (avatarUrl) => {
+      Activity.findById.mockResolvedValue({ id: 9 });
+      Comment.listByActivity.mockResolvedValue([
+        {
+          id: 1,
+          activityId: 9,
+          authorId: 4,
+          authorUsername: 'wolf',
+          authorAvatarUrl: avatarUrl,
+          message: 'See you there.',
+        },
+      ]);
 
-    const res = await request(app).get('/activities/9/comments');
+      const res = await request(app).get('/activities/9/comments');
 
-    expect(res.status).toBe(200);
-    expect(res.body.comments).toHaveLength(1);
-    expect(res.body.comments[0].authorUsername).toBe('wolf');
-    expect(Comment.listByActivity).toHaveBeenCalledWith(9);
-  });
+      expect(res.status).toBe(200);
+      expect(res.body.comments).toHaveLength(1);
+      expect(res.body.comments[0].authorUsername).toBe('wolf');
+      expect(res.body.comments[0].authorAvatarUrl).toBe(avatarUrl);
+      expect(Comment.listByActivity).toHaveBeenCalledWith(9);
+    },
+  );
 
   test('GET returns 404 when the activity does not exist', async () => {
     Activity.findById.mockResolvedValue(null);
@@ -75,40 +80,54 @@ describe('comment routes and controller', () => {
     expect(Comment.create).not.toHaveBeenCalled();
   });
 
-  test('POST creates a trimmed comment for the current user', async () => {
-    Activity.findById.mockResolvedValue({ id: 9 });
-    Comment.create.mockResolvedValue({
-      id: 3,
-      activityId: 9,
-      authorId: 4,
-      authorUsername: 'wolf',
-      message: 'See you there.',
-    });
+  test.each(['https://example.com/wolf.jpg', null])(
+    'POST creates a comment with the session author avatar %s',
+    async (avatarUrl) => {
+      Activity.findById.mockResolvedValue({ id: 9 });
+      Comment.create.mockResolvedValue({
+        id: 3,
+        activityId: 9,
+        authorId: 4,
+        authorUsername: 'wolf',
+        authorAvatarUrl: avatarUrl,
+        message: 'See you there.',
+      });
 
-    const res = await request(app)
-      .post('/activities/9/comments')
-      .set('x-test-user-id', '4')
-      .send({ message: '  See you there.  ' });
+      const res = await request(app)
+        .post('/activities/9/comments')
+        .set('x-test-user-id', '4')
+        .send({
+          message: '  See you there.  ',
+          authorId: 99,
+          authorUsername: 'imposter',
+          authorAvatarUrl: 'https://example.com/imposter.jpg',
+          avatarUrl: 'https://example.com/imposter.jpg',
+        });
 
-    expect(res.status).toBe(201);
-    expect(Comment.create).toHaveBeenCalledWith({
-      activityId: 9,
-      authorId: 4,
-      message: 'See you there.',
-    });
-    expect(res.body.comment.authorUsername).toBe('wolf');
-  });
+      expect(res.status).toBe(201);
+      expect(Comment.create).toHaveBeenCalledWith({
+        activityId: 9,
+        authorId: 4,
+        message: 'See you there.',
+      });
+      expect(res.body.comment.authorUsername).toBe('wolf');
+      expect(res.body.comment.authorAvatarUrl).toBe(avatarUrl);
+    },
+  );
 
-  test('POST rejects empty comments', async () => {
-    const res = await request(app)
-      .post('/activities/9/comments')
-      .set('x-test-user-id', '4')
-      .send({ message: '    ' });
+  test.each(['    ', undefined, null, 123, {}, []])(
+    'POST rejects invalid message %j',
+    async (message) => {
+      const res = await request(app)
+        .post('/activities/9/comments')
+        .set('x-test-user-id', '4')
+        .send({ message });
 
-    expect(res.status).toBe(400);
-    expect(Activity.findById).not.toHaveBeenCalled();
-    expect(Comment.create).not.toHaveBeenCalled();
-  });
+      expect(res.status).toBe(400);
+      expect(Activity.findById).not.toHaveBeenCalled();
+      expect(Comment.create).not.toHaveBeenCalled();
+    },
+  );
 
   test('POST rejects comments over 2000 characters', async () => {
     const res = await request(app)

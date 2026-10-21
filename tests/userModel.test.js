@@ -81,6 +81,26 @@ describe('user model database contract', () => {
     const [sql, params] = db.query.mock.calls[0];
     expect(sql).toContain('contact AS contact_info');
     expect(sql).not.toContain('password_hash');
+    expect(sql).toContain('avatar_url AS "avatarUrl"');
     expect(params).toEqual([3]);
+  });
+  test.each(['https://example.com/photo.jpg', null])(
+    'updateAvatar writes only the requested account: %s',
+    async (avatarUrl) => {
+      db.query.mockResolvedValue({ rows: [{ avatarUrl }] });
+      expect(await User.updateAvatar(42, avatarUrl)).toEqual({ avatarUrl });
+      const [sql, params] = db.query.mock.calls[0];
+      expect(sql).toContain('UPDATE users');
+      expect(sql).toContain('SET avatar_url = $2');
+      expect(sql).toContain('WHERE id = $1');
+      expect(params).toEqual([42, avatarUrl]);
+      expect(sql).not.toContain('contact');
+      expect(sql).not.toContain('password_hash');
+    },
+  );
+
+  test('updateAvatar returns null for a missing account', async () => {
+    db.query.mockResolvedValue({ rows: [] });
+    expect(await User.updateAvatar(999, null)).toBeNull();
   });
 });

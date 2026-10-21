@@ -7,6 +7,7 @@ async function listByActivity(activityId) {
        c.activity_id AS "activityId",
        c.author_id AS "authorId",
        u.username AS "authorUsername",
+       u.avatar_url AS "authorAvatarUrl",
        c.message,
        c.created_at AS "createdAt"
      FROM comments c
@@ -31,6 +32,7 @@ async function create({ activityId, authorId, message }) {
        inserted.activity_id AS "activityId",
        inserted.author_id AS "authorId",
        u.username AS "authorUsername",
+       u.avatar_url AS "authorAvatarUrl",
        inserted.message,
        inserted.created_at AS "createdAt"
      FROM inserted

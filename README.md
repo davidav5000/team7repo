@@ -51,6 +51,39 @@ image server-side so the API key does not appear in browser HTML or JavaScript.
 
 PostgreSQL via `pg`. Shared pool in `models/db.js`: `db.query(sql, params)` – always use `$1` placeholders. Sessions stored in Postgres (`session` table auto-created); tests use memory store.
 
+## Comments and profile pictures
+
+Run `npm run db:init` after configuring `DATABASE_URL`, before starting this version.
+It creates new tables or upgrades existing ones with nullable `users.avatar_url`.
+It is safe to run repeatedly; existing users initially have no profile picture.
+
+| Endpoint                        | Authentication | Request / response                                                                                               |
+| ------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `GET /activities/:id/comments`  | Public         | `{ comments: [...] }`, oldest first                                                                              |
+| `POST /activities/:id/comments` | Login required | Send `{ "message": "See you there!" }`; returns `201` with `{ comment: ... }`                                    |
+| `PUT /users/me/avatar`          | Login required | Send `{ "avatarUrl": "https://example.com/photo.jpg" }` or `{ "avatarUrl": null }`; returns `{ avatarUrl: ... }` |
+| `GET /users/me`                 | Login required | Existing `{ user: ... }` response now includes `user.avatarUrl`                                                  |
+
+Each comment includes `id`, `activityId`, `authorId`, `authorUsername`,
+`authorAvatarUrl`, `message`, and `createdAt`. Author details come from the account,
+never from the posted request. Contact information and password hashes are not
+included in comments. Messages are trimmed and must contain 1–2,000 characters.
+An invalid request returns JSON with `error` and validation `details`; a missing
+activity returns `404`.
+
+Avatar URLs must use HTTPS, include a hostname, contain no embedded credentials,
+and be at most 2,048 characters after trimming. Send `null` to remove a picture;
+an empty string is invalid. The server stores the link without fetching or
+verifying the image. Clients should show an initial/default avatar when the URL
+is `null` or fails to load. Existing comments use the account's current picture.
+Future photo uploads can store a hosted URL in the same field without changing
+comment responses. This API change does not add uploads or frontend rendering.
+
+For optional live PostgreSQL tests, set `AVATAR_TEST_DATABASE_URL` to a test
+database connection string and run `npm test -- --runInBand avatarIntegration`.
+These tests use temporary tables and roll back their changes; they verify fresh
+initialization, upgrades, and the authenticated avatar/comment flow.
+
 ## Open decisions
 
 - Frontend tech (static `public/` for now)
