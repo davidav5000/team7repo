@@ -1,77 +1,153 @@
-// Static sprint preview data. Replace with API loading during integration.
+// Temporary UI preview data.
+//
+// TODO: Replace this file with real API loading.
+// Feed:        GET /activities
+// Detail:      GET /activities/:id
+// Attendance:  GET /activities/:id/attendance
+// Comments:    GET /activities/:id/comments
+//
+// These sample objects intentionally use the same field names returned
+// by the real activity API so the UI can be migrated with minimal changes.
+
 (() => {
   const doc = globalThis.document;
+
   const samples = {
     '1': {
+      id: 1,
+      creatorId: 1,
+      creatorUsername: 'studentactivities',
       title: 'Campus Game Night',
-      when: 'October 16, 2026, at 6:00 PM',
-      startsAt: '2026-10-16T18:00',
+      startsAt: '2026-10-23T18:00:00-06:00',
       location: 'The Grand',
-      host: 'Student Activities Club',
       description: 'Meet other students and enjoy an evening of board games.',
-      comments: ['Should we bring our own games?', 'We have games ready, but feel free to bring your favorites!'],
+      latitude: null,
+      longitude: null,
+      goingCount: 8,
     },
+
     '2': {
+      id: 2,
+      creatorId: 2,
+      creatorUsername: 'computingsociety',
       title: 'Campus Study Group',
-      when: 'October 17, 2026, at 3:00 PM',
-      startsAt: '2026-10-17T15:00',
+      startsAt: '2026-10-24T15:00:00-06:00',
       location: 'Campus Library',
-      host: 'Computing Society',
       description: 'Bring your assignments and study alongside other students.',
-      comments: ['Can I bring my programming assignment?', 'Absolutely. Bring your laptop and questions!'],
+      latitude: null,
+      longitude: null,
+      goingCount: 4,
     },
-    "3": {
-  "title": "Pickleball Night",
-  "when": "October 19, 2026, at 6:00 PM",
-  "startsAt": "2026-10-19T18:00",
-  "location": "BYU–Idaho campus courts (meet at the Hart Building)",
-  "host": "Student Pickleball Group",
-  "description": "Join other BYU–Idaho students for friendly doubles games. Beginners welcome—bring a paddle if you have one.",
-  "comments": [
-    "Can beginners join?",
-    "Yes! We will pair up and explain the rules before playing."
-  ]
-},
-    "4": {
-  "title": "Campus Ultimate Frisbee",
-  "when": "October 20, 2026, at 5:00 PM",
-  "startsAt": "2026-10-20T17:00",
-  "location": "BYU–Idaho campus (meet outside the Hart Building)",
-  "host": "Campus Recreation Friends",
-  "description": "Take a study break with a casual game of ultimate frisbee. All skill levels welcome. Bring water and comfortable shoes.",
-  "comments": [
-    "Do I need to bring a disc?",
-    "We will bring a disc. Just bring water and come ready to play!"
-  ]
-},
+
+    '3': {
+      id: 3,
+      creatorId: 3,
+      creatorUsername: 'pickleballgroup',
+      title: 'Pickleball Night',
+      startsAt: '2026-10-26T18:00:00-06:00',
+      location: 'BYU–Idaho campus courts',
+      description:
+        'Friendly doubles games for BYU–Idaho students. Beginners are welcome.',
+      latitude: null,
+      longitude: null,
+      goingCount: 10,
+    },
+
+    '4': {
+      id: 4,
+      creatorId: 4,
+      creatorUsername: 'campusrecreation',
+      title: 'Campus Ultimate Frisbee',
+      startsAt: '2026-10-27T17:00:00-06:00',
+      location: 'BYU–Idaho campus',
+      description:
+        'Take a study break with a casual game of ultimate frisbee. All skill levels welcome.',
+      latitude: null,
+      longitude: null,
+      goingCount: 6,
+    },
   };
+
+  function formatWhen(value) {
+    const date = new Date(value);
+
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: 'long',
+      timeStyle: 'short',
+    }).format(date);
+  }
+
   const params = new globalThis.URLSearchParams(globalThis.location.search);
   const id = params.get('id') || '1';
-  const sample = samples[id];
-  if (!sample) {
-    doc.getElementById('activity-error').textContent = 'This activity is unavailable in the sample preview. Return to the feed to choose an activity.';
-    const content = doc.querySelector('.detail-grid') || doc.getElementById('activity-edit-form');
-    content.hidden = true;
+  const activity = samples[id];
+
+  if (!activity) {
+    const errorBox = doc.getElementById('activity-error');
+
+    if (errorBox) {
+      errorBox.textContent =
+        'This sample activity does not exist. Return to the feed and choose another activity.';
+    }
+
+    const content =
+      doc.querySelector('.detail-grid') ||
+      doc.getElementById('activity-edit-form');
+
+    if (content) {
+      content.hidden = true;
+    }
+
     return;
   }
+
   const detail = doc.getElementById('activity-detail');
+
   if (detail) {
-    detail.dataset.activityId = id;
-    for (const field of ['title', 'when', 'location', 'host', 'description']) {
-      doc.getElementById(`activity-${field}`).textContent = sample[field];
+    detail.dataset.activityId = activity.id;
+
+    doc.getElementById('activity-title').textContent = activity.title;
+    doc.getElementById('activity-when').textContent = formatWhen(
+      activity.startsAt,
+    );
+    doc.getElementById('activity-location').textContent = activity.location;
+    doc.getElementById('activity-host').textContent =
+      activity.creatorUsername;
+    doc.getElementById('activity-description').textContent =
+      activity.description;
+
+    const editLink = doc.querySelector('#owner-actions a');
+
+    if (editLink) {
+      editLink.href = `activity-edit.html?id=${activity.id}`;
     }
-    doc.querySelector('#owner-actions a').setAttribute('href', `activity-edit.html?id=${id}`);
-    doc.querySelectorAll('#comment-list .comment p').forEach((paragraph, index) => {
-      paragraph.textContent = sample.comments[index];
-    });
-  } else {
-    for (const field of ['title', 'startsAt', 'location', 'description']) {
-      doc.getElementById(field).value = sample[field];
+
+    const count = doc.getElementById('attendee-count');
+
+    if (count) {
+      count.textContent = `${activity.goingCount} going`;
     }
-    doc.getElementById('activity-edit-form').dataset.activityId = id;
-    doc.querySelectorAll('a[href="activity.html?id=1"]').forEach((link) => {
-      link.setAttribute('href', `activity.html?id=${id}`);
-    });
+
+    doc.title = `${activity.title} · Campus Activities`;
+    return;
   }
-  doc.title = `${detail ? sample.title : 'Edit ' + sample.title} · Campus Activities`;
+
+  const editForm = doc.getElementById('activity-edit-form');
+
+  if (editForm) {
+    editForm.dataset.activityId = activity.id;
+
+    doc.getElementById('title').value = activity.title;
+    doc.getElementById('startsAt').value =
+      activity.startsAt.slice(0, 16);
+    doc.getElementById('location').value = activity.location;
+    doc.getElementById('description').value = activity.description;
+
+    doc
+      .querySelectorAll('a[href="activity.html?id=1"]')
+      .forEach((link) => {
+        link.href = `activity.html?id=${activity.id}`;
+      });
+
+    doc.title = `Edit ${activity.title} · Campus Activities`;
+  }
 })();
