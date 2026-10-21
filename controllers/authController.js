@@ -45,6 +45,12 @@ async function register(req, res, next) {
     const passwordHash = await bcrypt.hash(req.body.password, bcryptRounds);
     const user = await User.create({ name, username, contactInfo, passwordHash });
 
+    // Registering a new account also signs the user in. Rotate the session ID
+    // before attaching the new user to prevent session fixation.
+    await regenerateSession(req);
+    req.session.userId = user.id;
+    await saveSession(req);
+
     return res.status(201).json({ user });
   } catch (err) {
     // PostgreSQL unique_violation: handle the race where another registration
