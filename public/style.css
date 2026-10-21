@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6;
+    color: #1f2937;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+    line-height: 1.6;
+  }
+  .activity-card {
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+  }
+
+  .activity-card h3 {
+    margin-top: 0;
+  }
+
+.activity-card button {
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 18px;
+    font: inherit;
+    cursor: pointer;
+  }
+  
+  .activity-card button:hover {
+    background-color: #1e40af;
+  }
+
+  .create-activity-button {
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 18px;
+    font: inherit;
+    cursor: pointer;
+  }
+  
+  .create-activity-button:hover {
+    background-color: #1e40af;
+  }
