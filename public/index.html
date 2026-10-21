@@ -22,7 +22,10 @@
 
     <main>
       <div class="page-head">
-        <h1>Activity Feed</h1>
+        <div>
+          <h1>Find your next campus adventure</h1>
+          <p class="muted">Meet people, discover events, and get involved.</p>
+        </div>
         <a class="btn" href="activity-new.html">+ New activity</a>
       </div>
 
@@ -39,50 +42,45 @@
 
       <div class="alert" id="feed-error" role="alert"></div>
 
-      <!-- GET /activities fills this list. Sample cards below show the markup. -->
-      <ul class="feed" id="activity-feed">
-        <li class="card activity-card" data-activity-id="1">
-          <h2><a href="activity.html?id=1">Pickup Soccer on the Quad</a></h2>
-          <ul class="meta">
-            <li>📅 Fri, Oct 10 · 4:00 PM</li>
-            <li>📍 Main Quad</li>
-            <li>👤 Hosted by jdoe</li>
-          </ul>
-          <p>Casual 5v5, all skill levels. Bring water and cleats if you have them.</p>
-          <div class="card-foot">
-            <span class="badge">8 going</span>
-            <a href="activity.html?id=1">View details →</a>
-          </div>
-        </li>
-
-        <li class="card activity-card" data-activity-id="2">
-          <h2><a href="activity.html?id=2">Study Group: Data Structures Midterm</a></h2>
-          <ul class="meta">
-            <li>📅 Mon, Oct 13 · 7:00 PM</li>
-            <li>📍 Library, Room 204</li>
-            <li>👤 Hosted by rex_o</li>
-          </ul>
-          <p>Going through practice problems on trees and graphs. Whiteboard reserved.</p>
-          <div class="card-foot">
-            <span class="badge">3 going</span>
-            <a href="activity.html?id=2">View details →</a>
-          </div>
-        </li>
-
-        <li class="card activity-card" data-activity-id="3">
-          <h2><a href="activity.html?id=3">Board Game Night</a></h2>
-          <ul class="meta">
-            <li>📅 Wed, Oct 15 · 8:00 PM</li>
-            <li>📍 Student Union, Lounge B</li>
-            <li>👤 Hosted by davidv</li>
-          </ul>
-          <p>Catan, Codenames, and whatever you bring. Snacks provided.</p>
-          <div class="card-foot">
-            <span class="badge">12 going</span>
-            <a href="activity.html?id=3">View details →</a>
-          </div>
-        </li>
-      </ul>
+      <p class="muted small">Temporary activity preview data for UI development.</p>
+      <!--
+        Temporary UI preview.
+        TODO: Replace these cards with GET /activities results.
+      -->
+      <div class="feed" id="activity-feed">
+        <article class="card activity-card">
+          <h3>Campus Game Night</h3>
+          <p><strong>Host:</strong> Student Activities Club</p>
+          <p><strong>When:</strong> October 16, 2026, at 6:00 PM</p>
+          <p><strong>Where:</strong> The Grand</p>
+          <p>Meet other students and enjoy an evening of board games.</p>
+          <a class="btn" href="activity.html?id=1">View Details</a>
+        </article>
+        <article class="card activity-card">
+          <h3>Campus Study Group</h3>
+          <p><strong>Host:</strong> Computing Society</p>
+          <p><strong>When:</strong> October 17, 2026, at 3:00 PM</p>
+          <p><strong>Where:</strong> Campus Library</p>
+          <p>Bring your assignments and study alongside other students.</p>
+          <a class="btn" href="activity.html?id=2">View Details</a>
+        </article>
+        <article class="card activity-card">
+          <h3>Pickleball Night</h3>
+          <p><strong>Host:</strong> Student Pickleball Group</p>
+          <p><strong>When:</strong> October 19, 2026, at 6:00 PM</p>
+          <p><strong>Where:</strong> BYU–Idaho campus courts (meet at the Hart Building)</p>
+          <p>Join other BYU–Idaho students for friendly doubles games. Beginners welcome—bring a paddle if you have one.</p>
+          <a class="btn" href="activity.html?id=3">View Details</a>
+        </article>
+        <article class="card activity-card">
+          <h3>Campus Ultimate Frisbee</h3>
+          <p><strong>Host:</strong> Campus Recreation Friends</p>
+          <p><strong>When:</strong> October 20, 2026, at 5:00 PM</p>
+          <p><strong>Where:</strong> BYU–Idaho campus (meet outside the Hart Building)</p>
+          <p>Take a study break with a casual game of ultimate frisbee. All skill levels welcome. Bring water and comfortable shoes.</p>
+          <a class="btn" href="activity.html?id=4">View Details</a>
+        </article>
+      </div>
 
       <!-- Show when the feed is empty. -->
       <div class="card empty-state" id="feed-empty" hidden>

@@ -43,10 +43,10 @@ h3 {
 }
 
 /* ---------- Header / nav ---------- */
-
 .site-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: #17324d;
+  border-bottom: 1px solid #244a6e;
+  box-shadow: 0 3px 12px rgba(23, 50, 77, 0.15);
 }
 
 .site-header .inner {
@@ -62,8 +62,8 @@ h3 {
 
 .brand {
   font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text);
+  font-size: 1.25rem;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -80,9 +80,15 @@ h3 {
   font-size: 0.95rem;
 }
 
-.nav a:hover,
+.nav a:hover {
+  color: var(--accent);
+}
+
 .nav a[aria-current='page'] {
-  color: var(--text);
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 6px;
 }
 
 /* ---------- Layout ---------- */
@@ -112,6 +118,28 @@ main.medium {
 
 .page-head h1 {
   margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  max-width: 24ch;
+}
+
+.page-head p {
+  margin: 0.65rem 0 0;
+}
+
+.page-head > .btn {
+  flex-shrink: 0;
+}
+
+input,
+textarea,
+select,
+fieldset,
+.detail-grid > * {
+  min-width: 0;
+}
+
+.card {
+  overflow-wrap: anywhere;
 }
 
 .card {
@@ -124,6 +152,21 @@ main.medium {
 
 .card + .card {
   margin-top: 1rem;
+}
+.feed > .card + .card {
+  margin-top: 0;
+}
+
+.feed > .activity-card {
+  border-top: 4px solid var(--accent);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.feed > .activity-card > .btn {
+  align-self: flex-start;
+  margin-top: auto;
 }
 
 .muted {
@@ -201,6 +244,19 @@ main.medium {
   background: none;
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+  background: var(--surface);
+}
+.btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* ---------- Forms ---------- */
 
 .form-field {
@@ -256,6 +312,7 @@ fieldset {
   border-radius: 8px;
   padding: 0.75rem 1rem 0.25rem;
   margin: 0 0 1rem;
+  background: var(--bg);
 }
 
 legend {
@@ -270,6 +327,9 @@ legend {
   gap: 0.5rem;
   margin-top: 1.25rem;
 }
+main.medium > .card > h1 {
+  margin-bottom: 1.25rem;
+}
 
 /* Error/status message slot: hidden until JS fills it. */
 .alert {
@@ -283,6 +343,17 @@ legend {
 
 .alert:empty {
   display: none;
+}
+main.narrow > .card > h1 {
+  margin-bottom: 1.25rem;
+}
+main.narrow > .card > p:last-child {
+  text-align: center;
+  margin-bottom: 0;
+}
+main.narrow > .card > h1 + p {
+  margin-top: -0.5rem;
+  margin-bottom: 1.25rem;
 }
 
 /* ---------- Feed ---------- */
@@ -302,6 +373,7 @@ legend {
   margin: 0;
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1rem;
 }
 
@@ -317,6 +389,16 @@ legend {
 
 .activity-card h2 a:hover {
   text-decoration: underline;
+}
+.activity-card h3 {
+  font-size: 1.25rem;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.activity-card p strong {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .meta {
@@ -433,6 +515,7 @@ legend {
   align-items: baseline;
   gap: 0.5rem;
   font-size: 0.9rem;
+  flex-wrap: wrap;
 }
 
 .comment-head strong {
@@ -442,6 +525,10 @@ legend {
 .comment p {
   margin: 0.25rem 0 0;
 }
+.detail-grid h1 {
+  color: var(--accent);
+  font-size: 1.75rem;
+}
 
 /* ---------- Profile ---------- */
 
@@ -449,6 +536,9 @@ legend {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+main.medium > form {
+  margin-top: 1rem;
 }
 
 .avatar {
@@ -462,6 +552,15 @@ legend {
   font-weight: 700;
   font-size: 1.5rem;
   flex-shrink: 0;
+  border: 2px solid var(--accent);
+}
+.profile-head h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-head p {
+  margin: 0;
 }
 
 /* ---------- Responsive ---------- */
@@ -471,4 +570,21 @@ legend {
   .form-row {
     grid-template-columns: 1fr;
   }
+}
+.toolbar input {
+  min-width: 0;
+}
+.site-header .brand,
+.site-header .nav a:hover,
+.site-header .nav a[aria-current='page'] {
+  color: #ffffff;
+}
+
+.site-header .nav a,
+.site-header .btn-link {
+  color: #dbe7f3;
+}
+
+.site-header .btn-link:hover {
+  color: #ffffff;
 }
