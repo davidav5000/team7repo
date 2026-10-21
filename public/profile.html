@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profile · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/profile.js" defer></script>
     <script src="js/logout.js" defer></script>
   </head>
   <body>
@@ -24,32 +25,28 @@
 
     <!-- GET /users/me (requires login) → { user: { id, name, username, ... } } -->
     <main class="medium">
-      <div class="alert" id="profile-error" role="alert"></div>
+      <div class="alert" id="profile-error" role="alert" aria-live="polite"></div>
 
       <section class="card">
         <div class="profile-head">
-          <div class="avatar" id="profile-initial" aria-hidden="true">J</div>
+          <div class="avatar" id="profile-initial" aria-hidden="true">…</div>
           <div>
-            <h1 id="profile-name">Jordan Doe</h1>
-            <p class="muted" id="profile-username">@jdoe</p>
+            <h1 id="profile-name">Loading profile…</h1>
+            <p class="muted" id="profile-username"></p>
           </div>
         </div>
       </section>
 
-      <!-- Phase 2: "My Activities". Placeholder lists for now. -->
       <section class="card" aria-labelledby="hosting-heading">
         <h2 id="hosting-heading">Hosting</h2>
-        <ul class="attendee-list" id="hosting-list">
-          <li><a href="activity.html?id=1">Pickup Soccer on the Quad</a> · Oct 10</li>
-        </ul>
+        <ul class="attendee-list" id="hosting-list"></ul>
+        <p class="hint" id="hosting-empty" hidden>You are not hosting any activities yet.</p>
       </section>
 
       <section class="card" aria-labelledby="going-heading">
         <h2 id="going-heading">Going to</h2>
-        <ul class="attendee-list" id="going-list">
-          <li><a href="activity.html?id=3">Board Game Night</a> · Oct 15</li>
-        </ul>
-        <p class="hint">Full "My Activities" view comes in Phase 2.</p>
+        <ul class="attendee-list" id="going-list"></ul>
+        <p class="hint" id="going-empty" hidden>You are not attending any activities yet.</p>
       </section>
 
       <form method="post" action="/logout">
