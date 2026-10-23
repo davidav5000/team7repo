@@ -1,4 +1,43 @@
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
+
+const searchValidation = [
+  query('q')
+    .optional()
+    .isString()
+    .withMessage('Search text must be a string')
+    .bail()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Search text must be 100 characters or fewer'),
+  query('location')
+    .optional()
+    .isString()
+    .withMessage('Location must be a string')
+    .bail()
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage('Location must be 200 characters or fewer'),
+  query('from')
+    .optional()
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('From must be a date in YYYY-MM-DD format')
+    .bail()
+    .isISO8601({ strict: true, strictSeparator: true })
+    .withMessage('From must be a valid date'),
+  query('to')
+    .optional()
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .withMessage('To must be a date in YYYY-MM-DD format')
+    .bail()
+    .isISO8601({ strict: true, strictSeparator: true })
+    .withMessage('To must be a valid date')
+    .custom((value, { req }) => {
+      if (req.query.from && value < req.query.from) {
+        throw new Error('To must be on or after from');
+      }
+      return true;
+    }),
+];
 
 const activityIdValidation = [
   param('id')
@@ -84,6 +123,7 @@ function isCoordinate(value) {
 }
 
 module.exports = {
+  searchValidation,
   activityIdValidation,
   activityValidation,
 };

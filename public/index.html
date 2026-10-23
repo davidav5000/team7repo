@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Activity Feed · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/api.js" defer></script>
+    <script src="js/feed.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -29,24 +31,23 @@
         <a class="btn" href="activity-new.html">+ New activity</a>
       </div>
 
-      <!-- Phase 2: search/filters. Placeholder only. -->
       <form class="toolbar" id="search-form" role="search">
         <input
           type="search"
           name="q"
-          placeholder="Search activities (coming in Phase 2)"
-          disabled
+          placeholder="Search activities"
+          aria-label="Search activities"
         />
-        <button class="btn btn-secondary" type="submit" disabled>Search</button>
+        <button class="btn btn-secondary" type="submit">Search</button>
+        <button class="btn btn-secondary" id="clear-search" type="button">
+          Clear
+        </button>
       </form>
 
       <div class="alert" id="feed-error" role="alert"></div>
 
-      <p class="muted small">Temporary activity preview data for UI development.</p>
-      <!--
-        Temporary UI preview.
-        TODO: Replace these cards with GET /activities results.
-      -->
+      <p class="muted small">Search the campus activity feed.</p>
+      <!-- Activity cards are rendered by js/feed.js. -->
       <div class="feed" id="activity-feed">
         <article class="card activity-card">
           <h3>Campus Game Night</h3>

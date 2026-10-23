@@ -15,12 +15,31 @@ describe('activity model database contract', () => {
 
     const activities = await Activity.list();
 
-    const [sql] = db.query.mock.calls[0];
+    const [sql, params] = db.query.mock.calls[0];
     expect(sql).toContain('FROM activities a');
     expect(sql).toContain('JOIN users u');
     expect(sql).toContain('LEFT JOIN attendance att');
     expect(sql).toContain('ORDER BY a.starts_at ASC');
+    expect(params).toEqual([]);
     expect(activities).toEqual([{ id: 1 }, { id: 2 }]);
+  });
+
+  test('list applies parameterized search filters', async () => {
+    db.query.mockResolvedValue({ rows: [] });
+
+    await Activity.list({
+      q: 'study',
+      location: 'library',
+      from: '2026-10-23',
+      to: '2026-10-31',
+    });
+
+    const [sql, params] = db.query.mock.calls[0];
+    expect(sql).toContain('a.title ILIKE $1');
+    expect(sql).toContain('a.location ILIKE $2');
+    expect(sql).toContain('a.starts_at >= $3::date');
+    expect(sql).toContain("a.starts_at < ($4::date + INTERVAL '1 day')");
+    expect(params).toEqual(['%study%', '%library%', '2026-10-23', '2026-10-31']);
   });
 
   test('findById uses a parameterized activity ID', async () => {

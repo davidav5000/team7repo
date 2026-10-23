@@ -1,12 +1,12 @@
 const { validationResult } = require('express-validator');
 const Activity = require('../models/activity');
 
-function validationFailure(req, res) {
+function validationFailure(req, res, message = 'Invalid activity data') {
   const errors = validationResult(req);
   if (errors.isEmpty()) return false;
 
   res.status(400).json({
-    error: 'Invalid activity data',
+    error: message,
     details: errors.array().map(({ path, msg }) => ({
       field: path,
       message: msg,
@@ -29,9 +29,27 @@ function activityFields(body) {
   };
 }
 
+function searchFilters(query) {
+  const filters = {};
+  const textFields = ['q', 'location'];
+
+  for (const field of textFields) {
+    const value = typeof query[field] === 'string' ? query[field].trim() : '';
+    if (value) filters[field] = value;
+  }
+
+  for (const field of ['from', 'to']) {
+    if (query[field]) filters[field] = query[field];
+  }
+
+  return filters;
+}
+
 async function listActivities(req, res, next) {
+  if (validationFailure(req, res, 'Invalid search filters')) return;
+
   try {
-    const activities = await Activity.list();
+    const activities = await Activity.list(searchFilters(req.query));
     return res.json({ activities });
   } catch (err) {
     return next(err);
