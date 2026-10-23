@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
+-- Also upgrades existing databases; CREATE TABLE IF NOT EXISTS does not add columns.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+
 -- Case-insensitive uniqueness: "Corbin" and "corbin" are the same user.
 CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_idx ON users (lower(username));
 
