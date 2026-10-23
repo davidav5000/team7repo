@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Register · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/register.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -23,7 +24,7 @@
         <h1>Create an account</h1>
         <p class="muted small">Join to post activities, RSVP, and comment.</p>
 
-        <div class="alert" id="register-error" role="alert"></div>
+        <div class="alert" id="register-error" role="alert" aria-live="polite"></div>
 
         <!-- POST /register  body: { name, username, contactInfo, password } -->
         <form id="register-form" method="post" action="/register">
@@ -83,7 +84,7 @@
             <p class="hint">At least 8 characters.</p>
           </div>
 
-          <button class="btn btn-block" type="submit">Register</button>
+          <button class="btn btn-block" id="register-submit" type="submit">Register</button>
         </form>
 
         <p class="small muted">

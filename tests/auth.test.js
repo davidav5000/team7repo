@@ -44,6 +44,38 @@ describe('authentication', () => {
     expect(await bcrypt.compare('correct-horse-battery', createArgs.passwordHash)).toBe(true);
   });
 
+  test('POST /register creates an authenticated session', async () => {
+    User.findByUsername.mockResolvedValue(null);
+    User.create.mockResolvedValue({
+      id: 9,
+      name: 'New Student',
+      username: 'newstudent',
+      contact_info: 'new@example.com',
+    });
+
+    const agent = request.agent(app);
+    const register = await agent.post('/register').send({
+      name: 'New Student',
+      username: 'NewStudent',
+      contactInfo: 'new@example.com',
+      password: 'correct-horse-battery',
+    });
+
+    expect(register.status).toBe(201);
+    expect(register.body.user.id).toBe(9);
+
+    User.findPublicById.mockResolvedValue({
+      id: 9,
+      name: 'New Student',
+      username: 'newstudent',
+      contact_info: 'new@example.com',
+    });
+
+    const me = await agent.get('/users/me');
+    expect(me.status).toBe(200);
+    expect(me.body.user.username).toBe('newstudent');
+  });
+
   test('POST /register rejects a duplicate username', async () => {
     User.findByUsername.mockResolvedValue({ id: 1 });
 

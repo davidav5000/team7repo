@@ -10,6 +10,7 @@ npm install
 cp .env.example .env   # set SESSION_SECRET + DATABASE_URL (your pg password/port)
 psql -U postgres -p <port> -c "CREATE DATABASE activities;"
 npm run db:check       # verify DB connection
+npm run db:init        # create/update database tables
 npm run dev            # http://localhost:3000
 ```
 
@@ -42,6 +43,7 @@ image server-side so the API key does not appear in browser HTML or JavaScript.
 | `npm run lint` / `lint:fix` | eslint           |
 | `npm run format`            | prettier         |
 | `npm run db:check`          | test DB conn     |
+| `npm run db:init`           | apply DB schema  |
 
 ## Layout
 
@@ -92,3 +94,12 @@ initialization, upgrades, and the authenticated avatar/comment flow.
 
 Branch per feature area (auth, activities, interaction, discovery); PR into `main`.
 See [WORKFLOW.md](WORKFLOW.md) for the complete workflow and conflict recovery guide.
+
+## Production configuration
+
+When `NODE_ENV=production`, both `SESSION_SECRET` and `DATABASE_URL` are required.
+Startup fails immediately if either is missing. Use a long random session secret
+and keep all real credentials in environment configuration, not in Git.
+
+The app trusts one reverse-proxy hop in production so secure session cookies work
+when HTTPS terminates at a reverse proxy.

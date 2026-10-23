@@ -11,11 +11,18 @@ const mapsRouter = require('./routes/maps');
 function createApp() {
   const app = express();
 
+  if (process.env.NODE_ENV === 'production') {
+    // Required when HTTPS terminates at a reverse proxy so secure session
+    // cookies are still issued for the original HTTPS request.
+    app.set('trust proxy', 1);
+  }
+
   app.use(helmet());
   if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  // Postgres-backed sessions; tests (and setups without a DB) fall back to the memory store
+  // Postgres-backed sessions when configured. Tests and local development
+  // without DATABASE_URL fall back to the in-memory session store.
   const store =
     process.env.DATABASE_URL && process.env.NODE_ENV !== 'test'
       ? new PgSession({ pool: require('./models/db').pool, createTableIfMissing: true })
@@ -43,7 +50,14 @@ function createApp() {
 
   app.use((err, req, res, _next) => {
     console.error(err);
-    res.status(err.status || 500).json({ error: err.message || 'Server error' });
+
+    const status = err.status || 500;
+    const error =
+      process.env.NODE_ENV === 'production' && status >= 500
+        ? 'Server error'
+        : err.message || 'Server error';
+
+    res.status(status).json({ error });
   });
 
   return app;
