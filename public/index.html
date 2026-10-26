@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Activity Feed · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/nav.js" defer></script>
     <script src="js/api.js" defer></script>
     <script src="js/feed.js" defer></script>
   </head>
@@ -48,40 +49,7 @@
 
       <p class="muted small">Search the campus activity feed.</p>
       <!-- Activity cards are rendered by js/feed.js. -->
-      <div class="feed" id="activity-feed">
-        <article class="card activity-card">
-          <h3>Campus Game Night</h3>
-          <p><strong>Host:</strong> Student Activities Club</p>
-          <p><strong>When:</strong> October 16, 2026, at 6:00 PM</p>
-          <p><strong>Where:</strong> The Grand</p>
-          <p>Meet other students and enjoy an evening of board games.</p>
-          <a class="btn" href="activity.html?id=1">View Details</a>
-        </article>
-        <article class="card activity-card">
-          <h3>Campus Study Group</h3>
-          <p><strong>Host:</strong> Computing Society</p>
-          <p><strong>When:</strong> October 17, 2026, at 3:00 PM</p>
-          <p><strong>Where:</strong> Campus Library</p>
-          <p>Bring your assignments and study alongside other students.</p>
-          <a class="btn" href="activity.html?id=2">View Details</a>
-        </article>
-        <article class="card activity-card">
-          <h3>Pickleball Night</h3>
-          <p><strong>Host:</strong> Student Pickleball Group</p>
-          <p><strong>When:</strong> October 19, 2026, at 6:00 PM</p>
-          <p><strong>Where:</strong> BYU–Idaho campus courts (meet at the Hart Building)</p>
-          <p>Join other BYU–Idaho students for friendly doubles games. Beginners welcome—bring a paddle if you have one.</p>
-          <a class="btn" href="activity.html?id=3">View Details</a>
-        </article>
-        <article class="card activity-card">
-          <h3>Campus Ultimate Frisbee</h3>
-          <p><strong>Host:</strong> Campus Recreation Friends</p>
-          <p><strong>When:</strong> October 20, 2026, at 5:00 PM</p>
-          <p><strong>Where:</strong> BYU–Idaho campus (meet outside the Hart Building)</p>
-          <p>Take a study break with a casual game of ultimate frisbee. All skill levels welcome. Bring water and comfortable shoes.</p>
-          <a class="btn" href="activity.html?id=4">View Details</a>
-        </article>
-      </div>
+      <div class="feed" id="activity-feed"></div>
 
       <!-- Show when the feed is empty. -->
       <div class="card empty-state" id="feed-empty" hidden>

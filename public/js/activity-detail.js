@@ -95,6 +95,15 @@
         const head = document.createElement('div');
         head.className = 'comment-head';
 
+        if (comment.authorAvatarUrl) {
+          const avatar = document.createElement('img');
+          avatar.className = 'comment-avatar';
+          avatar.src = comment.authorAvatarUrl;
+          avatar.alt = '';
+          avatar.loading = 'lazy';
+          head.append(avatar);
+        }
+
         const author = document.createElement('strong');
         author.textContent = comment.authorUsername;
 
