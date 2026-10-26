@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Activity · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/nav.js" defer></script>
     <script src="js/api.js" defer></script>
     <script src="js/logout.js" defer></script>
     <script src="js/activity-detail.js" defer></script>
@@ -33,26 +34,23 @@
       <div class="detail-grid">
         <!-- Left column: activity + discussion -->
         <div>
-          <article class="card" id="activity-detail" data-activity-id="1">
-            <h1 id="activity-title">Pickup Soccer on the Quad</h1>
+          <article class="card" id="activity-detail">
+            <h1 id="activity-title">Loading activity…</h1>
 
             <dl class="detail-meta">
               <dt>When</dt>
-              <dd id="activity-when">Friday, October 10 · 4:00 PM</dd>
+              <dd id="activity-when">—</dd>
               <dt>Where</dt>
-              <dd id="activity-location">Main Quad</dd>
+              <dd id="activity-location">—</dd>
               <dt>Host</dt>
-              <dd id="activity-host">jdoe</dd>
+              <dd id="activity-host">—</dd>
             </dl>
 
-            <p id="activity-description">
-              Casual 5v5, all skill levels. Bring water and cleats if you have them. We'll
-              split teams when everyone arrives.
-            </p>
+            <p id="activity-description"></p>
 
             <!-- Show only when the logged-in user is the creator. -->
-            <div class="owner-actions" id="owner-actions">
-              <a class="btn btn-secondary" href="activity-edit.html?id=1">Edit</a>
+            <div class="owner-actions" id="owner-actions" hidden>
+              <a class="btn btn-secondary" href="#">Edit</a>
               <!-- DELETE /activities/:id -->
               <button class="btn btn-danger" type="button" id="delete-activity">
                 Delete
@@ -64,22 +62,7 @@
             <h2 id="discussion-heading">Discussion</h2>
 
             <!-- GET /activities/:id/comments fills this list. -->
-            <ul class="comments" id="comment-list">
-              <li class="comment">
-                <div class="comment-head">
-                  <strong>rex_o</strong>
-                  <span class="muted small">Oct 7 · 2:14 PM</span>
-                </div>
-                <p>Is there a ball or should someone bring one?</p>
-              </li>
-              <li class="comment">
-                <div class="comment-head">
-                  <strong>jdoe</strong>
-                  <span class="muted small">Oct 7 · 2:30 PM</span>
-                </div>
-                <p>I've got two. Just show up!</p>
-              </li>
-            </ul>
+            <ul class="comments" id="comment-list"></ul>
 
             <div class="alert" id="comment-error" role="alert"></div>
 
@@ -103,7 +86,7 @@
         <aside>
           <section class="card" aria-labelledby="attendance-heading">
             <h2 id="attendance-heading">Who's going</h2>
-            <p><span class="badge" id="attendee-count">8 going</span></p>
+            <p><span class="badge" id="attendee-count">0 going</span></p>
 
             <!-- POST /activities/:id/attendance to join; DELETE to withdraw.
                  Toggle label to "Can't make it" when the user is already going. -->
@@ -111,17 +94,12 @@
               I'm Going
             </button>
 
-            <ul class="attendee-list" id="attendee-list">
-              <li>jdoe</li>
-              <li>rex_o</li>
-              <li>davidv</li>
-              <li class="muted">+ 5 more</li>
-            </ul>
+            <ul class="attendee-list" id="attendee-list"></ul>
           </section>
 
           <section class="card" aria-labelledby="map-heading">
             <h2 id="map-heading">Map</h2>
-            <div class="map-placeholder" id="activity-map">Map coming in Phase 2</div>
+            <div class="map-placeholder" id="activity-map">No map location provided.</div>
           </section>
         </aside>
       </div>

@@ -554,6 +554,12 @@ main.medium > form {
   flex-shrink: 0;
   border: 2px solid var(--accent);
 }
+
+.avatar[hidden],
+.avatar-image[hidden] {
+  display: none;
+}
+
 .profile-head h1 {
   font-size: 1.75rem;
   margin-bottom: 0.25rem;
@@ -588,3 +594,13 @@ main.medium > form {
 .site-header .btn-link:hover {
   color: #ffffff;
 }
+
+
+/* ---------- Session / avatar polish ---------- */
+.nav form { margin: 0; }
+.avatar-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+.avatar-image { object-fit: cover; }
+.avatar-form { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.avatar-form .form-field { margin-bottom: 0.5rem; }
+#avatar-status { margin-left: 0.5rem; }
+.comment-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
