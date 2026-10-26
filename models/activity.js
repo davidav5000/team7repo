@@ -1,6 +1,33 @@
 const db = require('./db');
 
-async function list() {
+async function list({ q, location, from, to } = {}) {
+  const conditions = [];
+  const params = [];
+
+  if (q) {
+    params.push(`%${q}%`);
+    conditions.push(
+      `(a.title ILIKE $${params.length} OR a.description ILIKE $${params.length} OR a.location ILIKE $${params.length})`,
+    );
+  }
+
+  if (location) {
+    params.push(`%${location}%`);
+    conditions.push(`a.location ILIKE $${params.length}`);
+  }
+
+  if (from) {
+    params.push(from);
+    conditions.push(`a.starts_at >= $${params.length}::date`);
+  }
+
+  if (to) {
+    params.push(to);
+    conditions.push(`a.starts_at < ($${params.length}::date + INTERVAL '1 day')`);
+  }
+
+  const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
   const result = await db.query(
     `SELECT
        a.id,
@@ -18,8 +45,10 @@ async function list() {
      FROM activities a
      JOIN users u ON u.id = a.creator_id
      LEFT JOIN attendance att ON att.activity_id = a.id
+     ${whereClause}
      GROUP BY a.id, u.username
      ORDER BY a.starts_at ASC, a.id ASC`,
+    params,
   );
 
   return result.rows;

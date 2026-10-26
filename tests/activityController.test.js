@@ -12,6 +12,7 @@ jest.mock('../models/activity', () => ({
 const Activity = require('../models/activity');
 const requireAuth = require('../middleware/requireAuth');
 const {
+  searchValidation,
   activityIdValidation,
   activityValidation,
 } = require('../middleware/activityValidation');
@@ -33,7 +34,7 @@ function createTestApp() {
     next();
   });
 
-  app.get('/activities', listActivities);
+  app.get('/activities', searchValidation, listActivities);
   app.get('/activities/:id', activityIdValidation, getActivity);
   app.post('/activities', requireAuth, activityValidation, createActivity);
   app.put(
@@ -86,6 +87,31 @@ describe('activity controller', () => {
     expect(res.status).toBe(200);
     expect(res.body.activities).toHaveLength(1);
     expect(Activity.list).toHaveBeenCalledTimes(1);
+    expect(Activity.list).toHaveBeenCalledWith({});
+  });
+
+  test('GET /activities passes search filters to the model', async () => {
+    Activity.list.mockResolvedValue([]);
+
+    const res = await request(app).get(
+      '/activities?q=  study  &location=library&from=2026-10-23&to=2026-10-31',
+    );
+
+    expect(res.status).toBe(200);
+    expect(Activity.list).toHaveBeenCalledWith({
+      q: 'study',
+      location: 'library',
+      from: '2026-10-23',
+      to: '2026-10-31',
+    });
+  });
+
+  test('GET /activities rejects invalid search filters', async () => {
+    const res = await request(app).get('/activities?from=2026-10-32');
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('Invalid search filters');
+    expect(Activity.list).not.toHaveBeenCalled();
   });
 
   test('GET /activities/:id returns 404 when the activity does not exist', async () => {
