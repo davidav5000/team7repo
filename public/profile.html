@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profile · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/nav.js" defer></script>
+    <script src="js/api.js" defer></script>
     <script src="js/profile.js" defer></script>
     <script src="js/logout.js" defer></script>
   </head>
@@ -29,12 +31,25 @@
 
       <section class="card">
         <div class="profile-head">
-          <div class="avatar" id="profile-initial" aria-hidden="true">…</div>
+          <div class="avatar-wrap">
+            <img class="avatar avatar-image" id="profile-avatar" alt="" hidden />
+            <div class="avatar" id="profile-initial" aria-hidden="true">…</div>
+          </div>
           <div>
             <h1 id="profile-name">Loading profile…</h1>
             <p class="muted" id="profile-username"></p>
           </div>
         </div>
+
+        <form id="avatar-form" class="avatar-form">
+          <div class="form-field">
+            <label for="avatarUrl">Avatar image URL</label>
+            <input id="avatarUrl" name="avatarUrl" type="url" maxlength="2048" placeholder="https://example.com/avatar.jpg" />
+            <p class="hint">Leave blank and save to remove your avatar.</p>
+          </div>
+          <button class="btn btn-secondary" type="submit">Save avatar</button>
+          <span class="small muted" id="avatar-status" role="status"></span>
+        </form>
       </section>
 
       <section class="card" aria-labelledby="hosting-heading">

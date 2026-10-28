@@ -17,7 +17,15 @@ function createApp() {
     app.set('trust proxy', 1);
   }
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+    }),
+  );
   if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
