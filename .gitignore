@@ -5,3 +5,6 @@ coverage/
 *.sqlite
 *.db
 .DS_Store
+
+# Private local development PostgreSQL data
+.local-postgres/

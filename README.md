@@ -103,3 +103,21 @@ and keep all real credentials in environment configuration, not in Git.
 
 The app trusts one reverse-proxy hop in production so secure session cookies work
 when HTTPS terminates at a reverse proxy.
+
+
+### Private local database setup (macOS)
+
+With PostgreSQL installed, run `npm run setup:local`, then `npm start`.
+The setup creates a private project database on `127.0.0.1:55432`, applies
+`db/schema.sql`, and writes generated credentials to the ignored `.env` file.
+It leaves an existing non-placeholder database configuration alone and refuses
+to replace it. Database files stay in ignored `.local-postgres/`.
+If PostgreSQL tools are elsewhere, set `POSTGRES_BIN` to their bin directory.
+Run setup again after restarting your Mac to start the database again.
+Stop it with `npm run db:local:stop`; saved accounts and activities are retained.
+
+Open `http://localhost:3000/register.html` (use the app server, not Live Server).
+Register an account, then open Create and post an activity. Log out and sign in
+with the same account to verify login and saved activities. Posting requires a
+session; the backend identifies the activity creator from that session.
+Never commit `.env` or share its generated credentials.

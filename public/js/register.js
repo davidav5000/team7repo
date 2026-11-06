@@ -38,7 +38,10 @@ form.addEventListener('submit', async (event) => {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      errorBox.textContent = getErrorMessage(data);
+      errorBox.textContent =
+        response.status >= 500
+          ? 'The server could not create your account. Please try again later or contact the team.'
+          : getErrorMessage(data);
       return;
     }
 
