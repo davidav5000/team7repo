@@ -16,9 +16,10 @@ npm run dev            # http://localhost:3000
 
 ## Google Maps Static API
 
-Enable the Maps Static API in Google Cloud, create an API key restricted to that
-API, and set `GOOGLE_MAPS_API_KEY` in `.env`. The server exposes a small image
-proxy at:
+Enable the Maps Static API and Places API (New) in Google Cloud, create an API
+key restricted to those APIs, and set `GOOGLE_MAPS_API_KEY` in `.env`. The key
+is used only by the server and must not be placed in browser HTML or JavaScript.
+The server exposes a small image proxy at:
 
 ```
 GET /api/maps/static?lat=40.015&lng=-105.2705&zoom=15
@@ -32,6 +33,17 @@ Use the endpoint as an image source, for example:
 
 The route validates coordinates and Static Maps dimensions, then fetches the
 image server-side so the API key does not appear in browser HTML or JavaScript.
+
+The location picker can search for places around Rexburg through:
+
+```
+GET /api/maps/search?q=library
+```
+
+The response is normalized to `{ places: [{ name, address, latitude, longitude }] }`.
+Search input is trimmed and limited to 100 characters. The server applies a
+Rexburg-centered bias, limits results, and returns application-level errors for
+invalid input or Google provider failures.
 
 ## Scripts
 
