@@ -619,3 +619,13 @@ main.medium > form {
   margin: 0.5rem 0 0;
 }
 .comment-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.comment-avatar-initial {
+  display: inline-grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+.comment-avatar[hidden] {
+  display: none;
+}
