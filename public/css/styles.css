@@ -602,5 +602,20 @@ main.medium > form {
 .avatar-image { object-fit: cover; }
 .avatar-form { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
 .avatar-form .form-field { margin-bottom: 0.5rem; }
-#avatar-status { margin-left: 0.5rem; }
+#avatar-preview-wrap {
+  margin: 1rem 0;
+}
+#avatar-preview-wrap[hidden] {
+  display: none;
+}
+.avatar-preview {
+  display: block;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+#avatar-status {
+  margin: 0.5rem 0 0;
+}
 .comment-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }

@@ -1,9 +1,10 @@
-// Opt-in live PostgreSQL tests. All tables live in pg_temp and changes roll back.
+// Opt-in live PostgreSQL tests. Tables live only in pg_temp and are discarded.
 const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 const request = require('supertest');
 const bcrypt = require('bcryptjs');
+const sharp = require('sharp');
 
 let mockClient;
 jest.mock('../models/db', () => ({
@@ -121,14 +122,14 @@ describeDatabase('avatar PostgreSQL integration', () => {
   });
 
   beforeEach(async () => {
-    await mockClient.query('BEGIN');
     // Creating a temp table initializes pg_temp before the schema is applied.
     await mockClient.query('CREATE TEMP TABLE avatar_test_bootstrap (id INTEGER)');
-    await mockClient.query('SET LOCAL search_path TO pg_temp');
+    await mockClient.query('SET search_path TO pg_temp');
   });
 
   afterEach(async () => {
     await mockClient.query('ROLLBACK');
+    await mockClient.query('DISCARD TEMP');
   });
 
   afterAll(async () => {
@@ -308,16 +309,35 @@ describeDatabase('avatar PostgreSQL integration', () => {
       message: 'Hello',
     });
 
-    const avatarUrl = 'https://example.com/alice.jpg';
+    const png = await sharp({
+      create: { width: 10, height: 20, channels: 3, background: 'blue' },
+    })
+      .png()
+      .toBuffer();
     const updated = await aliceAgent
-      .put('/users/me/avatar')
-      .send({ avatarUrl, userId: bob.id });
+      .put(`/users/me/avatar?userId=${bob.id}`)
+      .attach('avatar', png, 'alice.png');
     expect(updated.status).toBe(200);
-    expect(updated.body).toEqual({ avatarUrl });
+    const { avatarUrl } = updated.body;
+    expect(avatarUrl).toMatch(new RegExp(`^/users/${alice.id}/avatar\\?v=`));
+    const image = await request(app).get(avatarUrl);
+    expect(image.status).toBe(200);
+    expect(await sharp(image.body).metadata()).toMatchObject({
+      format: 'webp',
+      width: 256,
+      height: 256,
+    });
     const me = await aliceAgent.get('/users/me');
     expect(me.body.user.avatarUrl).toBe(avatarUrl);
     const bobProfile = await bobAgent.get('/users/me');
     expect(bobProfile.body.user.avatarUrl).toBeNull();
+
+    const invalid = await aliceAgent
+      .put('/users/me/avatar')
+      .attach('avatar', Buffer.from('invalid picture'), 'broken.png');
+    expect(invalid.status).toBe(400);
+    expect((await aliceAgent.get('/users/me')).body.user.avatarUrl).toBe(avatarUrl);
+    expect((await request(app).get(avatarUrl)).body).toEqual(image.body);
 
     const second = await aliceAgent
       .post(commentsUrl)
@@ -337,8 +357,20 @@ describeDatabase('avatar PostgreSQL integration', () => {
       expect(comment).not.toHaveProperty('password_hash');
     }
 
-    const removed = await aliceAgent.put('/users/me/avatar').send({ avatarUrl: null });
+    const replaced = await aliceAgent
+      .put('/users/me/avatar')
+      .attach('avatar', png, 'new.png');
+    expect(replaced.status).toBe(200);
+    expect(replaced.body.avatarUrl).not.toBe(avatarUrl);
+    expect((await request(app).get(avatarUrl)).status).toBe(404);
+    expect((await request(app).get(commentsUrl)).body.comments[0].authorAvatarUrl).toBe(
+      replaced.body.avatarUrl,
+    );
+
+    const removed = await aliceAgent.delete('/users/me/avatar');
     expect(removed.status).toBe(200);
+    expect(removed.body).toEqual({ avatarUrl: null });
+    expect((await request(app).get(replaced.body.avatarUrl)).status).toBe(404);
     const afterRemoval = await request(app).get(commentsUrl);
     expect(
       afterRemoval.body.comments.every((comment) => comment.authorAvatarUrl === null),
