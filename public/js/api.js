@@ -13,7 +13,9 @@
       credentials: 'same-origin',
       ...options,
       headers: {
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(options.body && !(options.body instanceof FormData)
+          ? { 'Content-Type': 'application/json' }
+          : {}),
         ...(options.headers || {}),
       },
     });
@@ -63,6 +65,10 @@
     });
   }
 
+  function putForm(url, body) {
+    return request(url, { method: 'PUT', body });
+  }
+
   function getActivityId() {
     const params = new URLSearchParams(globalThis.location.search);
     const value = params.get('id');
@@ -90,6 +96,7 @@
     getJson,
     postJson,
     putJson,
+    putForm,
     deleteRequest,
     getActivityId,
     formatDate,
