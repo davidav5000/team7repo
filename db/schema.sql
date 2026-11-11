@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS users (
   id            INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  name          VARCHAR(100) NOT NULL CHECK (length(trim(name)) > 0),
+  name          VARCHAR(100) NOT NULL CHECK (length(trim(name)) > 0), 
   username      VARCHAR(30)  NOT NULL CHECK (username ~ '^[A-Za-z0-9_]{3,30}$'),
   contact       VARCHAR(255),                    -- private: never return in API responses
   password_hash TEXT         NOT NULL,           -- bcrypt hash only
