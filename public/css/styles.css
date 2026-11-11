@@ -686,3 +686,37 @@ main.medium > form {
     margin-left: 0;
   }
 }
+
+#avatar-preview-wrap {
+  margin: 1rem 0;
+}
+#avatar-preview-wrap[hidden] {
+  display: none;
+}
+.avatar-preview {
+  display: block;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+#avatar-status {
+  margin: 0.5rem 0 0;
+}
+.comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.comment-avatar-initial {
+  display: inline-grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+.comment-avatar[hidden] {
+  display: none;
+}

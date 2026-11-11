@@ -60,29 +60,45 @@
             Make it easier for your campus community to recognize you.
           </p>
           <div class="form-field">
-            <label class="photo-picker" for="avatarFile"
+            <label class="photo-picker" for="avatar"
               ><span aria-hidden="true">↑</span><strong>Choose a photo</strong
-              ><small>JPG, PNG or WebP · Up to 10 MB</small></label
+              ><small>JPG, PNG or WebP · Up to 5 MB</small></label
             >
             <input
               class="photo-file-input"
-              id="avatarFile"
-              name="avatarFile"
+              id="avatar"
+              name="avatar"
               type="file"
               accept="image/jpeg,image/png,image/webp"
               aria-describedby="avatar-hint"
+              disabled
             />
             <p class="hint" id="avatar-hint">
-              Choose a photo to preview it, then save your changes.
+              JPEG, PNG, or WebP, up to 5 MB. Pictures are cropped to a square. Animated
+              pictures are not supported.
             </p>
           </div>
-          <div class="photo-actions">
-            <button class="btn" type="submit" disabled>Save photo</button
-            ><button class="btn btn-secondary" id="remove-photo" type="button" hidden>
-              Remove photo
-            </button>
-          </div>
-          <span class="small muted" id="avatar-status" role="status"></span>
+          <figure id="avatar-preview-wrap" hidden>
+            <img
+              id="avatar-preview"
+              class="avatar-preview"
+              alt="Selected picture preview"
+            />
+            <figcaption class="hint" id="avatar-preview-caption"></figcaption>
+          </figure>
+          <button class="btn" id="avatar-save" type="submit" disabled>
+            Save picture
+          </button>
+          <button class="btn btn-secondary" id="avatar-remove" type="button" disabled>
+            Remove picture
+          </button>
+          <p
+            class="small muted"
+            id="avatar-status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></p>
         </form>
       </section>
 

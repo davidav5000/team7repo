@@ -14,6 +14,14 @@ CREATE TABLE IF NOT EXISTS users (
 -- Also upgrades existing databases; CREATE TABLE IF NOT EXISTS does not add columns.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 
+-- Image bytes are loaded only when serving a picture, not in profile/comment queries.
+-- The primary key allows one stored picture per user; revision versions its URL.
+CREATE TABLE IF NOT EXISTS user_avatars (
+  user_id     INTEGER PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
+  image_data  BYTEA NOT NULL CHECK (octet_length(image_data) > 0),
+  revision    UUID NOT NULL
+);
+
 -- Case-insensitive uniqueness: "Corbin" and "corbin" are the same user.
 CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_idx ON users (lower(username));
 

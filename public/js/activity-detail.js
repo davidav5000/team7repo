@@ -95,14 +95,25 @@
       const head = document.createElement('div');
       head.className = 'comment-head';
 
+      const initial = document.createElement('span');
+      initial.className = 'comment-avatar comment-avatar-initial';
+      initial.textContent =
+        comment.authorUsername?.trim()?.charAt(0)?.toUpperCase() || '?';
+      initial.setAttribute('aria-hidden', 'true');
       if (comment.authorAvatarUrl) {
         const avatar = document.createElement('img');
         avatar.className = 'comment-avatar';
         avatar.src = comment.authorAvatarUrl;
         avatar.alt = '';
         avatar.loading = 'lazy';
+        initial.hidden = true;
+        avatar.addEventListener('error', () => {
+          avatar.hidden = true;
+          initial.hidden = false;
+        });
         head.append(avatar);
       }
+      head.append(initial);
 
       const author = document.createElement('strong');
       author.textContent = comment.authorUsername;

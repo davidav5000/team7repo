@@ -1,28 +1,8 @@
-const { body } = require('express-validator');
+const { param, query } = require('express-validator');
 
-const avatarValidation = [
-  body('avatarUrl')
-    .custom((value) => value === null || typeof value === 'string')
-    .withMessage('Avatar URL must be a string or null')
-    .bail()
-    .customSanitizer((value) => (typeof value === 'string' ? value.trim() : value))
-    .custom((value) => {
-      if (value === null) return true;
-      if (value.length > 2048 || !/^https:\/\//i.test(value) || /\s/.test(value)) {
-        return false;
-      }
-
-      const url = new URL(value);
-      return (
-        url.protocol === 'https:' &&
-        Boolean(url.hostname) &&
-        !url.username &&
-        !url.password
-      );
-    })
-    .withMessage(
-      'Avatar URL must be an HTTPS URL without credentials, at most 2048 characters',
-    ),
+const avatarReadValidation = [
+  param('id').isInt({ min: 1, max: 2147483647 }),
+  query('v').isString().bail().isUUID(4),
 ];
 
-module.exports = { avatarValidation };
+module.exports = { avatarReadValidation };
