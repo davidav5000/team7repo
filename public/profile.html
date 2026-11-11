@@ -43,25 +43,58 @@
 
         <form id="avatar-form" class="avatar-form">
           <div class="form-field">
-            <label for="avatarUrl">Avatar image URL</label>
-            <input id="avatarUrl" name="avatarUrl" type="url" maxlength="2048" placeholder="https://example.com/avatar.jpg" />
-            <p class="hint">Leave blank and save to remove your avatar.</p>
+            <label for="avatar">Choose a profile picture</label>
+            <input
+              id="avatar"
+              name="avatar"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              aria-describedby="avatar-hint"
+              disabled
+            />
+            <p class="hint" id="avatar-hint">
+              JPEG, PNG, or WebP, up to 5 MB. Pictures are cropped to a square. Animated
+              pictures are not supported.
+            </p>
           </div>
-          <button class="btn btn-secondary" type="submit">Save avatar</button>
-          <span class="small muted" id="avatar-status" role="status"></span>
+          <figure id="avatar-preview-wrap" hidden>
+            <img
+              id="avatar-preview"
+              class="avatar-preview"
+              alt="Selected picture preview"
+            />
+            <figcaption class="hint" id="avatar-preview-caption"></figcaption>
+          </figure>
+          <button class="btn btn-secondary" id="avatar-save" type="submit" disabled>
+            Save picture
+          </button>
+          <button class="btn btn-secondary" id="avatar-remove" type="button" disabled>
+            Remove picture
+          </button>
+          <p
+            class="small muted"
+            id="avatar-status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          ></p>
         </form>
       </section>
 
       <section class="card" aria-labelledby="hosting-heading">
         <h2 id="hosting-heading">Hosting</h2>
         <ul class="attendee-list" id="hosting-list"></ul>
-        <p class="hint" id="hosting-empty" hidden>You are not hosting any activities yet.</p>
+        <p class="hint" id="hosting-empty" hidden>
+          You are not hosting any activities yet.
+        </p>
       </section>
 
       <section class="card" aria-labelledby="going-heading">
         <h2 id="going-heading">Going to</h2>
         <ul class="attendee-list" id="going-list"></ul>
-        <p class="hint" id="going-empty" hidden>You are not attending any activities yet.</p>
+        <p class="hint" id="going-empty" hidden>
+          You are not attending any activities yet.
+        </p>
       </section>
 
       <form method="post" action="/logout">

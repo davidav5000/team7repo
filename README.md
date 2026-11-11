@@ -5,7 +5,6 @@ Student activity forum. Node.js + Express. See `Activities_Web_App_Project_Plan.
 ## Setup
 
 ```
-yo
 npm install
 cp .env.example .env   # set SESSION_SECRET + DATABASE_URL (your pg password/port)
 psql -U postgres -p <port> -c "CREATE DATABASE activities;"
@@ -68,15 +67,20 @@ PostgreSQL via `pg`. Shared pool in `models/db.js`: `db.query(sql, params)` – 
 ## Comments and profile pictures
 
 Run `npm run db:init` after configuring `DATABASE_URL`, before starting this version.
-It creates new tables or upgrades existing ones with nullable `users.avatar_url`.
-It is safe to run repeatedly; existing users initially have no profile picture.
+It creates or upgrades `users.avatar_url` and creates `user_avatars` for uploaded
+picture bytes (`BYTEA`) and revision UUIDs. Each user has at most one stored
+picture; deleting the user cascades to that picture. Setup is safe to repeat and
+preserves existing users and URL-based pictures. Run it before using uploads on
+an existing database; the application does not apply schema changes at startup.
 
-| Endpoint                        | Authentication | Request / response                                                                                               |
-| ------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `GET /activities/:id/comments`  | Public         | `{ comments: [...] }`, oldest first                                                                              |
-| `POST /activities/:id/comments` | Login required | Send `{ "message": "See you there!" }`; returns `201` with `{ comment: ... }`                                    |
-| `PUT /users/me/avatar`          | Login required | Send `{ "avatarUrl": "https://example.com/photo.jpg" }` or `{ "avatarUrl": null }`; returns `{ avatarUrl: ... }` |
-| `GET /users/me`                 | Login required | Existing `{ user: ... }` response now includes `user.avatarUrl`                                                  |
+| Endpoint                             | Authentication | Request / response                                                                                             |
+| ------------------------------------ | -------------- | -------------------------------------------------------------------------------------------------------------- |
+| `GET /activities/:id/comments`       | Public         | `{ comments: [...] }`, oldest first                                                                            |
+| `POST /activities/:id/comments`      | Login required | Send `{ "message": "See you there!" }`; returns `201` with `{ comment: ... }`                                  |
+| `PUT /users/me/avatar`               | Login required | Send `multipart/form-data` with one file field named `avatar` and no text fields; returns `{ avatarUrl: ... }` |
+| `DELETE /users/me/avatar`            | Login required | Removes the stored picture or legacy URL; returns `{ avatarUrl: null }`                                        |
+| `GET /users/:id/avatar?v=<revision>` | Public         | Returns WebP bytes for the matching revision, or JSON `404` for missing/stale pictures                         |
+| `GET /users/me`                      | Login required | Existing `{ user: ... }` response now includes `user.avatarUrl`                                                |
 
 Each comment includes `id`, `activityId`, `authorId`, `authorUsername`,
 `authorAvatarUrl`, `message`, and `createdAt`. Author details come from the account,
@@ -85,18 +89,58 @@ included in comments. Messages are trimmed and must contain 1–2,000 characters
 An invalid request returns JSON with `error` and validation `details`; a missing
 activity returns `404`.
 
-Avatar URLs must use HTTPS, include a hostname, contain no embedded credentials,
-and be at most 2,048 characters after trimming. Send `null` to remove a picture;
-an empty string is invalid. The server stores the link without fetching or
-verifying the image. Clients should show an initial/default avatar when the URL
-is `null` or fails to load. Existing comments use the account's current picture.
-Future photo uploads can store a hosted URL in the same field without changing
-comment responses. This API change does not add uploads or frontend rendering.
+The profile page offers a file picker, local preview, Save picture, and Remove
+picture. Selecting a file does not upload it. The current saved picture remains
+until saving succeeds; upload failures preserve it. Controls are disabled during
+requests, status messages announce results, and missing/unavailable pictures fall
+back to an initial. Preview URLs are released when cleared or leaving the page.
+
+Uploads accept JPEG, PNG, or WebP files up to 5 MiB (5,242,880 bytes; shown as
+"5 MB" in the UI) and at most 25 million pixels. Actual file content must match
+the declared type. Corrupt, unsupported, and animated pictures are rejected.
+Sharp applies orientation, center-crops to 256 x 256, and encodes WebP at quality
+80 without original metadata. File-size failures return JSON `413`; invalid
+uploads return JSON `400`. Authentication is checked before parsing uploads, and
+the session user determines whose picture changes. JSON URL updates are retired;
+existing external picture URLs remain visible until replaced or removed.
+
+The data flow is browser `FormData` -> authenticated route -> Multer upload
+middleware -> Sharp image service -> controller -> avatar model -> PostgreSQL.
+The model uses one connection and a transaction to update picture bytes and the
+user's URL together, locking the user row to serialize concurrent changes. Each
+replacement gets a fresh revision URL. Profile/comment queries read the URL,
+not binary bytes; comments use the author's current URL when loaded. The browser
+fetches the image URL separately. Pictures are public, including those displayed
+on comments. Image responses use an ETag and `Cache-Control: public, no-cache`
+so clients revalidate; a still-current matching ETag can return `304`.
+
+For example, a browser upload uses:
+
+```js
+const form = new FormData();
+form.append('avatar', fileInput.files[0]);
+await fetch('/users/me/avatar', {
+  method: 'PUT',
+  credentials: 'same-origin',
+  body: form,
+});
+```
+
+Let the browser set `Content-Type` and its multipart boundary. Do not send the
+file as JSON or set `Content-Type: application/json`.
 
 For optional live PostgreSQL tests, set `AVATAR_TEST_DATABASE_URL` to a test
 database connection string and run `npm test -- --runInBand avatarIntegration`.
-These tests use temporary tables and roll back their changes; they verify fresh
-initialization, upgrades, and the authenticated avatar/comment flow.
+Use `NODE_ENV=test` when loading environment configuration into a custom test
+launcher; normal `npm test` sets it automatically when not already defined.
+These tests use session-local tables in `pg_temp`, discarded after each test;
+they do not migrate or change persistent application tables. They verify fresh
+initialization, repeated upgrades, binary persistence, transaction rollback,
+and the authenticated upload -> comments -> replacement -> removal flow. The
+test database must allow temporary tables. Without this variable, these tests
+are skipped. Normal `npm test` also covers processing, HTTP contracts, and
+frontend behavior using mocked browser/DB boundaries; those checks do not replace
+a live browser and PostgreSQL smoke test.
 
 ## Open decisions
 

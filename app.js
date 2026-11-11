@@ -21,7 +21,7 @@ function createApp() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          imgSrc: ["'self'", 'data:', 'https:'],
+          imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
         },
       },
     }),

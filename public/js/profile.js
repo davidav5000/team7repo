@@ -6,12 +6,42 @@ const profileUsername = document.getElementById('profile-username');
 const profileInitial = document.getElementById('profile-initial');
 const profileAvatar = document.getElementById('profile-avatar');
 const avatarForm = document.getElementById('avatar-form');
-const avatarInput = document.getElementById('avatarUrl');
+const avatarInput = document.getElementById('avatar');
 const avatarStatus = document.getElementById('avatar-status');
+const avatarSave = document.getElementById('avatar-save');
+const avatarRemove = document.getElementById('avatar-remove');
+const avatarPreview = document.getElementById('avatar-preview');
+const avatarPreviewWrap = document.getElementById('avatar-preview-wrap');
+const avatarPreviewCaption = document.getElementById('avatar-preview-caption');
 const hostingList = document.getElementById('hosting-list');
 const goingList = document.getElementById('going-list');
 const hostingEmpty = document.getElementById('hosting-empty');
 const goingEmpty = document.getElementById('going-empty');
+let savedUser = null;
+let selectedFile = null;
+let previewUrl = null;
+let avatarBusy = false;
+
+function updateAvatarControls() {
+  avatarInput.disabled = avatarBusy || !savedUser;
+  avatarSave.disabled = avatarBusy || !savedUser || !selectedFile;
+  avatarRemove.disabled = avatarBusy || !savedUser?.avatarUrl;
+  avatarForm.setAttribute('aria-busy', String(avatarBusy));
+}
+
+function releasePreview() {
+  avatarPreview.removeAttribute('src');
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = null;
+  selectedFile = null;
+  avatarPreviewWrap.hidden = true;
+  avatarPreviewCaption.textContent = '';
+}
+
+function clearSelection() {
+  releasePreview();
+  avatarInput.value = '';
+}
 
 function renderActivities(listElement, emptyElement, activities) {
   listElement.replaceChildren();
@@ -34,7 +64,7 @@ function renderActivities(listElement, emptyElement, activities) {
 }
 
 function renderAvatar(user) {
-  avatarInput.value = user.avatarUrl || '';
+  profileInitial.textContent = user.name?.trim()?.charAt(0)?.toUpperCase() || '?';
   if (user.avatarUrl) {
     profileAvatar.src = user.avatarUrl;
     profileAvatar.alt = `${user.name} avatar`;
@@ -45,7 +75,6 @@ function renderAvatar(user) {
     profileAvatar.alt = '';
     profileAvatar.hidden = true;
     profileInitial.hidden = false;
-    profileInitial.textContent = user.name?.trim()?.charAt(0)?.toUpperCase() || '?';
   }
 }
 
@@ -61,6 +90,8 @@ async function loadProfile() {
     profileUsername.textContent = `@${user.username}`;
     document.title = `${user.name} · Campus Activities`;
     renderAvatar(user);
+    savedUser = user;
+    updateAvatarControls();
     renderActivities(hostingList, hostingEmpty, activityData.hosting);
     renderActivities(goingList, goingEmpty, activityData.going);
   } catch (error) {
@@ -77,19 +108,90 @@ async function loadProfile() {
 
 avatarForm.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const button = avatarForm.querySelector('button[type="submit"]');
-  button.disabled = true;
-  avatarStatus.textContent = '';
+  if (avatarBusy || !savedUser || !selectedFile) return;
+  avatarBusy = true;
+  updateAvatarControls();
+  avatarStatus.textContent = 'Saving picture…';
   try {
-    const avatarUrl = avatarInput.value.trim();
-    const data = await api.putJson('/users/me/avatar', { avatarUrl });
-    renderAvatar({ name: profileName.textContent, avatarUrl: data.avatarUrl });
-    avatarStatus.textContent = 'Saved.';
+    const formData = new FormData();
+    formData.append('avatar', selectedFile);
+    const data = await api.putForm('/users/me/avatar', formData);
+    savedUser.avatarUrl = data.avatarUrl;
+    renderAvatar(savedUser);
+    clearSelection();
+    avatarStatus.textContent = 'Picture saved.';
   } catch (error) {
-    avatarStatus.textContent = error.message || 'Unable to save avatar.';
+    clearSelection();
+    renderAvatar(savedUser);
+    avatarStatus.textContent = error.message || 'Unable to save picture.';
+    if (error.status === 401) globalThis.location.assign('login.html');
   } finally {
-    button.disabled = false;
+    avatarBusy = false;
+    updateAvatarControls();
+    avatarInput.focus();
   }
+});
+
+avatarInput.addEventListener('change', () => {
+  if (avatarBusy) return;
+  releasePreview();
+  const file = avatarInput.files?.[0];
+  avatarStatus.textContent = '';
+  if (file) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      avatarInput.value = '';
+      avatarStatus.textContent = 'Choose a JPEG, PNG, or WebP picture.';
+    } else if (!file.size || file.size > 5 * 1024 * 1024) {
+      avatarInput.value = '';
+      avatarStatus.textContent = 'Choose a nonempty picture of 5 MB or smaller.';
+    } else {
+      selectedFile = file;
+      previewUrl = URL.createObjectURL(file);
+      avatarPreview.src = previewUrl;
+      avatarPreviewWrap.hidden = false;
+      avatarPreviewCaption.textContent = `${file.name} — Preview only. Click Save picture to upload.`;
+      avatarStatus.textContent = 'Picture selected. Review the preview, then save.';
+    }
+  }
+  updateAvatarControls();
+});
+
+avatarRemove.addEventListener('click', async () => {
+  if (avatarBusy || !savedUser?.avatarUrl) return;
+  avatarBusy = true;
+  updateAvatarControls();
+  avatarStatus.textContent = 'Removing picture…';
+  try {
+    await api.deleteRequest('/users/me/avatar');
+    savedUser.avatarUrl = null;
+    clearSelection();
+    renderAvatar(savedUser);
+    avatarStatus.textContent = 'Picture removed.';
+  } catch (error) {
+    avatarStatus.textContent = error.message || 'Unable to remove picture.';
+    if (error.status === 401) globalThis.location.assign('login.html');
+  } finally {
+    avatarBusy = false;
+    updateAvatarControls();
+    avatarInput.focus();
+  }
+});
+
+profileAvatar.addEventListener('error', () => {
+  profileAvatar.hidden = true;
+  profileInitial.hidden = false;
+});
+
+avatarPreview.addEventListener('error', () => {
+  if (!previewUrl) return;
+  clearSelection();
+  avatarStatus.textContent = 'Unable to preview this picture. Choose another image.';
+  updateAvatarControls();
+});
+
+globalThis.addEventListener('pagehide', () => {
+  clearSelection();
+  updateAvatarControls();
 });
 
 loadProfile();
