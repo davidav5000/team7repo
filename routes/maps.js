@@ -4,12 +4,40 @@ const {
   StaticMapParameterError,
   buildStaticMapUrl,
 } = require('../services/staticMap');
+const {
+  searchPlaces,
+  PlaceSearchConfigurationError,
+  PlaceSearchParameterError,
+  PlaceSearchProviderError,
+} = require('../services/placeSearch');
 
 function createMapsRouter({
   apiKey = process.env.GOOGLE_MAPS_API_KEY,
   fetchImpl = fetch,
 } = {}) {
   const router = express.Router();
+
+  router.get('/search', async (req, res, next) => {
+    try {
+      const places = await searchPlaces({
+        apiKey,
+        query: req.query.q,
+        fetchImpl,
+      });
+
+      return res.json({ places });
+    } catch (error) {
+      if (
+        error instanceof PlaceSearchConfigurationError ||
+        error instanceof PlaceSearchParameterError ||
+        error instanceof PlaceSearchProviderError
+      ) {
+        return res.status(error.statusCode).json({ error: error.message });
+      }
+
+      return next(error);
+    }
+  });
 
   router.get('/static', async (req, res, next) => {
     try {
