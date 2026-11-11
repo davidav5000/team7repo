@@ -6,7 +6,7 @@ const profileUsername = document.getElementById('profile-username');
 const profileInitial = document.getElementById('profile-initial');
 const profileAvatar = document.getElementById('profile-avatar');
 const avatarForm = document.getElementById('avatar-form');
-const avatarInput = document.getElementById('avatarUrl');
+const avatarInput = document.getElementById('avatarFile');
 const avatarStatus = document.getElementById('avatar-status');
 const hostingList = document.getElementById('hosting-list');
 const goingList = document.getElementById('going-list');
@@ -34,7 +34,7 @@ function renderActivities(listElement, emptyElement, activities) {
 }
 
 function renderAvatar(user) {
-  avatarInput.value = user.avatarUrl || '';
+  document.getElementById('remove-photo').hidden = !user.avatarUrl;
   if (user.avatarUrl) {
     profileAvatar.src = user.avatarUrl;
     profileAvatar.alt = `${user.name} avatar`;
@@ -60,7 +60,11 @@ async function loadProfile() {
     profileName.textContent = user.name;
     profileUsername.textContent = `@${user.username}`;
     document.title = `${user.name} · Campus Activities`;
+    savedAvatar = user.avatarUrl || null;
     renderAvatar(user);
+    document.getElementById('hosting-count').textContent =
+      activityData.hosting?.length ?? 0;
+    document.getElementById('going-count').textContent = activityData.going?.length ?? 0;
     renderActivities(hostingList, hostingEmpty, activityData.hosting);
     renderActivities(goingList, goingEmpty, activityData.going);
   } catch (error) {
@@ -75,20 +79,112 @@ async function loadProfile() {
   }
 }
 
+const savePhoto = avatarForm.querySelector('button[type="submit"]');
+const removePhoto = document.getElementById('remove-photo');
+let selectedPhoto = null;
+let savedAvatar = null;
+let selectionVersion = 0;
+
+function setPhotoBusy(busy) {
+  avatarInput.disabled = busy;
+  removePhoto.disabled = busy;
+  savePhoto.disabled = busy || !selectedPhoto;
+}
+
+avatarInput.addEventListener('change', async () => {
+  const version = ++selectionVersion;
+  const file = avatarInput.files[0];
+  selectedPhoto = null;
+  savePhoto.disabled = true;
+  renderAvatar({ name: profileName.textContent, avatarUrl: savedAvatar });
+  if (!file) return;
+  avatarStatus.textContent = '';
+  if (
+    !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
+    file.size > 10 * 1024 * 1024
+  ) {
+    avatarStatus.textContent = 'Choose a JPG, PNG or WebP image under 10 MB.';
+    avatarInput.value = '';
+    return;
+  }
+  try {
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 512;
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, 512, 512);
+    const side = Math.min(bitmap.width, bitmap.height);
+    context.drawImage(
+      bitmap,
+      (bitmap.width - side) / 2,
+      (bitmap.height - side) / 2,
+      side,
+      side,
+      0,
+      0,
+      512,
+      512,
+    );
+    bitmap.close();
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', 0.88),
+    );
+    if (version !== selectionVersion) return;
+    if (!blob) throw new Error('Unable to read photo');
+    selectedPhoto = blob;
+    profileAvatar.src = canvas.toDataURL('image/jpeg', 0.88);
+    profileAvatar.alt = 'Preview of your new profile photo';
+    profileAvatar.hidden = false;
+    profileInitial.hidden = true;
+    savePhoto.disabled = false;
+    avatarStatus.textContent = 'Preview ready. Save to update your photo.';
+  } catch {
+    if (version === selectionVersion)
+      avatarStatus.textContent =
+        'This image could not be opened. Please choose another photo.';
+  }
+});
+
 avatarForm.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const button = avatarForm.querySelector('button[type="submit"]');
-  button.disabled = true;
-  avatarStatus.textContent = '';
+  if (!selectedPhoto) return;
+  setPhotoBusy(true);
+  avatarStatus.textContent = 'Uploading…';
   try {
-    const avatarUrl = avatarInput.value.trim();
-    const data = await api.putJson('/users/me/avatar', { avatarUrl });
-    renderAvatar({ name: profileName.textContent, avatarUrl: data.avatarUrl });
-    avatarStatus.textContent = 'Saved.';
+    const data = await api.request('/users/me/avatar/upload', {
+      method: 'POST',
+      body: selectedPhoto,
+      headers: { 'Content-Type': 'image/jpeg' },
+    });
+    savedAvatar = data.avatarUrl;
+    selectedPhoto = null;
+    avatarInput.value = '';
+    renderAvatar({ name: profileName.textContent, avatarUrl: savedAvatar });
+    avatarStatus.textContent = 'Profile photo updated.';
   } catch (error) {
-    avatarStatus.textContent = error.message || 'Unable to save avatar.';
+    avatarStatus.textContent =
+      error.message || 'Unable to upload photo. Please try again.';
   } finally {
-    button.disabled = false;
+    setPhotoBusy(false);
+  }
+});
+
+removePhoto.addEventListener('click', async () => {
+  ++selectionVersion;
+  setPhotoBusy(true);
+  avatarStatus.textContent = 'Removing…';
+  try {
+    await api.putJson('/users/me/avatar', { avatarUrl: null });
+    savedAvatar = null;
+    selectedPhoto = null;
+    avatarInput.value = '';
+    renderAvatar({ name: profileName.textContent, avatarUrl: null });
+    avatarStatus.textContent = 'Profile photo removed.';
+  } catch (error) {
+    avatarStatus.textContent = error.message || 'Unable to remove photo.';
+  } finally {
+    setPhotoBusy(false);
   }
 });
 

@@ -53,3 +53,7 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 CREATE INDEX IF NOT EXISTS comments_activity_id_idx ON comments (activity_id, created_at);
+
+-- Preserve replies as standalone comments if their parent is removed.
+ALTER TABLE comments ADD COLUMN IF NOT EXISTS parent_id INTEGER REFERENCES comments(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS comments_parent_id_idx ON comments(parent_id);

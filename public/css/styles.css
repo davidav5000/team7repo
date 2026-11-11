@@ -595,12 +595,94 @@ main.medium > form {
   color: #ffffff;
 }
 
-
 /* ---------- Session / avatar polish ---------- */
-.nav form { margin: 0; }
-.avatar-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
-.avatar-image { object-fit: cover; }
-.avatar-form { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-.avatar-form .form-field { margin-bottom: 0.5rem; }
-#avatar-status { margin-left: 0.5rem; }
-.comment-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.nav form {
+  margin: 0;
+}
+.avatar-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+.avatar-image {
+  object-fit: cover;
+}
+.avatar-form {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.avatar-form .form-field {
+  margin-bottom: 0.5rem;
+}
+#avatar-status {
+  margin-left: 0.5rem;
+}
+.comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Own-comment controls and inline editor. */
+.comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+  margin-top: 0.6rem;
+}
+.comment-actions[hidden] {
+  display: none;
+}
+.comment-actions .btn-link {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 0.3rem 0;
+}
+.comment-actions .comment-delete {
+  color: var(--danger);
+}
+.comment-edit-form {
+  margin-top: 0.75rem;
+}
+.comment-edit-form textarea {
+  min-height: 5rem;
+}
+.comment > [role='status']:empty {
+  display: none;
+}
+.comment > p {
+  white-space: pre-wrap;
+}
+
+.comment-reply {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.35rem;
+  padding: 0.3rem 0;
+}
+.comment-replies {
+  list-style: none;
+  padding: 0 0 0 1rem;
+  margin: 1rem 0 0 0.3rem;
+  border-left: 2px solid var(--accent-soft);
+}
+.comment-replies > .comment:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.comment-edit-form label {
+  margin-bottom: 0.5rem;
+}
+@media (max-width: 480px) {
+  .comment-replies {
+    padding-left: 0.65rem;
+    margin-left: 0;
+  }
+}

@@ -8,6 +8,7 @@ async function listByActivity(activityId) {
        c.author_id AS "authorId",
        u.username AS "authorUsername",
        u.avatar_url AS "authorAvatarUrl",
+       c.parent_id AS "parentId",
        c.message,
        c.created_at AS "createdAt"
      FROM comments c
@@ -43,7 +44,33 @@ async function create({ activityId, authorId, message }) {
   return result.rows[0];
 }
 
-module.exports = {
-  listByActivity,
-  create,
-};
+async function updateOwned({ id, activityId, authorId, message }) {
+  const result = await db.query(
+    `UPDATE comments SET message = $4
+     WHERE id = $1 AND activity_id = $2 AND author_id = $3
+     RETURNING id, message`,
+    [id, activityId, authorId, message],
+  );
+  return result.rows[0] || null;
+}
+
+async function deleteOwned({ id, activityId, authorId }) {
+  const result = await db.query(
+    `DELETE FROM comments WHERE id = $1 AND activity_id = $2 AND author_id = $3 RETURNING id`,
+    [id, activityId, authorId],
+  );
+  return result.rows[0] || null;
+}
+
+async function createReply({ activityId, authorId, message, parentId }) {
+  const result = await db.query(
+    `INSERT INTO comments (activity_id, author_id, message, parent_id)
+     SELECT $1, $2, $3, id FROM comments
+     WHERE id = $4 AND activity_id = $1 AND parent_id IS NULL
+     RETURNING id, activity_id AS "activityId", author_id AS "authorId", message, parent_id AS "parentId", created_at AS "createdAt"`,
+    [activityId, authorId, message, parentId],
+  );
+  return result.rows[0] || null;
+}
+
+module.exports = { createReply, updateOwned, deleteOwned, listByActivity, create };

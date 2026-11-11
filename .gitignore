@@ -5,3 +5,8 @@ coverage/
 *.sqlite
 *.db
 .DS_Store
+
+/public/uploads/avatars/
+
+# Local PostgreSQL data is private machine state.
+.local-postgres/
