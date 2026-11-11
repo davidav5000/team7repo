@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Profile · Campus Activities</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/profile.css" />
     <script src="js/nav.js" defer></script>
     <script src="js/api.js" defer></script>
     <script src="js/profile.js" defer></script>
     <script src="js/logout.js" defer></script>
   </head>
-  <body>
+  <body class="profile-page">
     <header class="site-header">
       <div class="inner">
         <a class="brand" href="index.html">Campus Activities</a>
@@ -26,25 +27,45 @@
     </header>
 
     <!-- GET /users/me (requires login) → { user: { id, name, username, ... } } -->
-    <main class="medium">
+    <main class="profile-layout">
+      <div class="profile-page-heading">
+        <div>
+          <p class="eyebrow">YOUR CAMPUS, YOUR PEOPLE</p>
+          <h1>My profile</h1>
+          <p class="muted">A little about you. Everything you’re part of.</p>
+        </div>
+        <a class="btn" href="activity-new.html">+ Create activity</a>
+      </div>
       <div class="alert" id="profile-error" role="alert" aria-live="polite"></div>
 
-      <section class="card">
+      <section class="card profile-card">
+        <div class="profile-cover" aria-hidden="true">
+          <span>CAMPUS ACTIVITIES</span>
+        </div>
         <div class="profile-head">
           <div class="avatar-wrap">
             <img class="avatar avatar-image" id="profile-avatar" alt="" hidden />
             <div class="avatar" id="profile-initial" aria-hidden="true">…</div>
           </div>
           <div>
-            <h1 id="profile-name">Loading profile…</h1>
+            <p class="eyebrow">MY ACCOUNT</p>
+            <h2 id="profile-name">Loading profile…</h2>
             <p class="muted" id="profile-username"></p>
           </div>
         </div>
 
         <form id="avatar-form" class="avatar-form">
+          <h3>Profile photo</h3>
+          <p class="muted small">
+            Make it easier for your campus community to recognize you.
+          </p>
           <div class="form-field">
-            <label for="avatar">Choose a profile picture</label>
+            <label class="photo-picker" for="avatar"
+              ><span aria-hidden="true">↑</span><strong>Choose a photo</strong
+              ><small>JPG, PNG or WebP · Up to 5 MB</small></label
+            >
             <input
+              class="photo-file-input"
               id="avatar"
               name="avatar"
               type="file"
@@ -65,7 +86,7 @@
             />
             <figcaption class="hint" id="avatar-preview-caption"></figcaption>
           </figure>
-          <button class="btn btn-secondary" id="avatar-save" type="submit" disabled>
+          <button class="btn" id="avatar-save" type="submit" disabled>
             Save picture
           </button>
           <button class="btn btn-secondary" id="avatar-remove" type="button" disabled>
@@ -81,25 +102,49 @@
         </form>
       </section>
 
-      <section class="card" aria-labelledby="hosting-heading">
-        <h2 id="hosting-heading">Hosting</h2>
-        <ul class="attendee-list" id="hosting-list"></ul>
-        <p class="hint" id="hosting-empty" hidden>
-          You are not hosting any activities yet.
-        </p>
-      </section>
+      <div class="profile-activities">
+        <section class="card activity-section" aria-labelledby="hosting-heading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">BRING PEOPLE TOGETHER</p>
+              <h2 id="hosting-heading">Hosting</h2>
+            </div>
+            <span class="count-badge" id="hosting-count" aria-label="Activities hosted"
+              >—</span
+            >
+          </div>
+          <ul class="attendee-list" id="hosting-list"></ul>
+          <div class="profile-empty" id="hosting-empty" hidden>
+            <span class="empty-icon" aria-hidden="true">✦</span>
+            <h3>Your next great idea starts here</h3>
+            <p>Host a study session, a pickup game, or something entirely your own.</p>
+            <a class="btn btn-secondary" href="activity-new.html"
+              >Create your first activity <span aria-hidden="true">↗</span></a
+            >
+          </div>
+        </section>
 
-      <section class="card" aria-labelledby="going-heading">
-        <h2 id="going-heading">Going to</h2>
-        <ul class="attendee-list" id="going-list"></ul>
-        <p class="hint" id="going-empty" hidden>
-          You are not attending any activities yet.
-        </p>
-      </section>
-
-      <form method="post" action="/logout">
-        <button class="btn btn-secondary" type="submit">Log out</button>
-      </form>
+        <section class="card activity-section" aria-labelledby="going-heading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">MAKE TIME FOR CONNECTION</p>
+              <h2 id="going-heading">Going to</h2>
+            </div>
+            <span class="count-badge" id="going-count" aria-label="Activities attending"
+              >—</span
+            >
+          </div>
+          <ul class="attendee-list" id="going-list"></ul>
+          <div class="profile-empty" id="going-empty" hidden>
+            <span class="empty-icon" aria-hidden="true">↗</span>
+            <h3>Find your next campus moment</h3>
+            <p>Meet new people and discover what’s happening around you.</p>
+            <a class="btn btn-secondary" href="index.html"
+              >Explore activities <span aria-hidden="true">→</span></a
+            >
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer class="site-footer">Campus Activities · Team 7</footer>
