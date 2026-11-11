@@ -92,6 +92,9 @@ async function loadProfile() {
     renderAvatar(user);
     savedUser = user;
     updateAvatarControls();
+    document.getElementById('hosting-count').textContent =
+      activityData.hosting?.length ?? 0;
+    document.getElementById('going-count').textContent = activityData.going?.length ?? 0;
     renderActivities(hostingList, hostingEmpty, activityData.hosting);
     renderActivities(goingList, goingEmpty, activityData.going);
   } catch (error) {

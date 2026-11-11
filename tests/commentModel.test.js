@@ -64,3 +64,36 @@ describe('comment model database contract', () => {
     expect(comment.authorUsername).toBe('wolf');
   });
 });
+
+describe('comment ownership at mutation time', () => {
+  beforeEach(() => jest.resetAllMocks());
+  test('update constrains comment, activity and author in the SQL', async () => {
+    db.query.mockResolvedValue({ rows: [{ id: 3, message: 'New' }] });
+    await Comment.updateOwned({ id: 3, activityId: 9, authorId: 4, message: 'New' });
+    const [sql, params] = db.query.mock.calls[0];
+    expect(sql).toContain('id = $1 AND activity_id = $2 AND author_id = $3');
+    expect(params).toEqual([3, 9, 4, 'New']);
+  });
+  test('delete constrains comment, activity and author in the SQL', async () => {
+    db.query.mockResolvedValue({ rows: [] });
+    expect(await Comment.deleteOwned({ id: 3, activityId: 9, authorId: 4 })).toBeNull();
+    const [sql, params] = db.query.mock.calls[0];
+    expect(sql).toContain('id = $1 AND activity_id = $2 AND author_id = $3');
+    expect(params).toEqual([3, 9, 4]);
+  });
+});
+
+test('reply insert validates the parent belongs to the same activity atomically', async () => {
+  db.query.mockReset();
+  db.query.mockResolvedValue({ rows: [] });
+  const result = await Comment.createReply({
+    activityId: 9,
+    authorId: 4,
+    message: 'Reply',
+    parentId: 3,
+  });
+  const [sql, params] = db.query.mock.calls[0];
+  expect(sql).toContain('id = $4 AND activity_id = $1 AND parent_id IS NULL');
+  expect(params).toEqual([9, 4, 'Reply', 3]);
+  expect(result).toBeNull();
+});
