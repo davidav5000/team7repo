@@ -571,7 +571,15 @@ main.medium > form {
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 720px) {
+@media (max-width: 800px) {
+  .site-header .inner,
+  main,
+  .site-footer {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .feed,
   .detail-grid,
   .form-row {
     grid-template-columns: 1fr;
@@ -681,6 +689,22 @@ main.medium > form {
   margin-bottom: 0.5rem;
 }
 @media (max-width: 480px) {
+  #activity-form .form-actions,
+  #activity-edit-form .form-actions {
+    flex-direction: column;
+  }
+
+  #activity-form .form-actions .btn,
+  #activity-edit-form .form-actions .btn {
+    width: 100%;
+  }
+
+  #activity-form fieldset,
+  #activity-edit-form fieldset {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
   .comment-replies {
     padding-left: 0.65rem;
     margin-left: 0;
