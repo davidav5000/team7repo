@@ -243,6 +243,8 @@
     max-width: 620px;
     gap: 1.25rem;
     padding-top: 1.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
   .profile-page-heading {
     flex-wrap: wrap;
@@ -252,6 +254,8 @@
   }
   .profile-page .site-header .inner {
     gap: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
