@@ -8,6 +8,7 @@
     <script src="js/nav.js" defer></script>
     <script src="js/api.js" defer></script>
     <script src="js/logout.js" defer></script>
+    <script src="js/location-picker.js" defer></script>
     <script src="js/activity-edit.js" defer></script>
   </head>
   <body>
@@ -39,38 +40,41 @@
         <form id="activity-edit-form" data-method="PUT">
           <div class="form-field">
             <label for="title">Title</label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              maxlength="120"
-             
-              required
-            />
+            <input id="title" name="title" type="text" maxlength="120" required />
           </div>
 
           <div class="form-row">
             <div class="form-field">
               <label for="startsAt">Date &amp; time</label>
-              <input
-                id="startsAt"
-                name="startsAt"
-                type="datetime-local"
-               
-                required
-              />
+              <input id="startsAt" name="startsAt" type="datetime-local" required />
             </div>
             <div class="form-field">
               <label for="location">Location</label>
-              <input
-                id="location"
-                name="location"
-                type="text"
-                maxlength="200"
-               
-                required
-              />
+              <input id="location" name="location" type="text" maxlength="200" required />
             </div>
+          </div>
+
+          <div class="location-search" aria-labelledby="location-search-label">
+            <label id="location-search-label" for="location-search"
+              >Find a place near Rexburg</label
+            >
+            <div id="location-search-form" class="location-search-form" role="search">
+              <input
+                id="location-search"
+                type="search"
+                maxlength="100"
+                placeholder="e.g. coffee shop, park, BYU-Idaho"
+                autocomplete="off"
+              />
+              <button class="btn btn-secondary" type="button">Search</button>
+            </div>
+            <p
+              class="hint"
+              id="location-search-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <ul class="location-results" id="location-results"></ul>
           </div>
 
           <div class="form-field">

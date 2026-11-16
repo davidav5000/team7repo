@@ -1,4 +1,4 @@
-/* global api */
+/* global LocationPicker, api */
 
 (() => {
   const form = document.querySelector('#activity-form');
@@ -6,6 +6,14 @@
   const submitButton = form.querySelector('button[type="submit"]');
   const loginHint = document.querySelector('#activity-login-hint');
   let posting = false;
+
+  LocationPicker.init({
+    form,
+    searchForm: document.querySelector('#location-search-form'),
+    queryInput: document.querySelector('#location-search'),
+    results: document.querySelector('#location-results'),
+    status: document.querySelector('#location-search-status'),
+  });
 
   function optionalNumber(value) {
     const trimmed = value.trim();
