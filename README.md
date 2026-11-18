@@ -64,6 +64,53 @@ invalid input or Google provider failures.
 
 PostgreSQL via `pg`. Shared pool in `models/db.js`: `db.query(sql, params)` – always use `$1` placeholders. Sessions stored in Postgres (`session` table auto-created); tests use memory store.
 
+## Optional core PostgreSQL integration tests
+
+Create a dedicated, disposable database whose name ends in `_test` (for example,
+`CREATE DATABASE campus_activities_test;`). Never point these tests at development
+or production. The PostgreSQL role needs permission to create and drop schemas in
+that test database; it does not need permission to create databases during tests.
+
+Set `CORE_TEST_DATABASE_URL` in your shell, using your own local credentials. Jest
+does not load `.env` automatically. The following connection string is a placeholder:
+
+```powershell
+$env:CORE_TEST_DATABASE_URL = 'postgres://TEST_USER:TEST_PASSWORD@localhost:5432/campus_activities_test'
+npm test -- --runInBand coreDatabaseIntegration
+Remove-Item Env:CORE_TEST_DATABASE_URL
+```
+
+Or in Bash:
+
+```bash
+CORE_TEST_DATABASE_URL='postgres://TEST_USER:TEST_PASSWORD@localhost:5432/campus_activities_test' npm test -- --runInBand coreDatabaseIntegration
+```
+
+The suite never falls back to `DATABASE_URL`. It rejects database names without
+the `_test` suffix and connections matching `DATABASE_URL` when that variable is
+set. Use a genuinely separate test database even if your development database
+also has a test-like name. Keep real credentials out of tracked files.
+
+Each test creates a unique schema, uses a search path containing only that schema,
+and drops it afterward, including when an assertion fails. Existing application
+tables are not migrated or deleted. The initialization test invokes the real
+`npm run db:init` command with its connection explicitly redirected to the test
+database and isolated schema. An empty schema exercises fresh initialization;
+rerunning initialization verifies existing user, activity, attendance, and comment
+data survives. Other tests verify case-insensitive usernames, coordinate pairing,
+activity/user deletion cascades, unrelated data preservation, and a real-model
+create -> attend -> comment -> read flow. A forcibly terminated process may leave
+a schema named `core_test_<random id>` in the disposable test database.
+
+Without `CORE_TEST_DATABASE_URL`, the suite is skipped. With it configured, a
+connection or initialization failure fails the suite rather than silently skipping.
+Normal checks require no live database:
+
+```text
+npm test -- --runInBand
+npm run lint
+```
+
 ## Comments and profile pictures
 
 Run `npm run db:init` after configuring `DATABASE_URL`, before starting this version.
