@@ -1,10 +1,18 @@
-/* global api */
+/* global LocationPicker, api */
 
 (() => {
   const activityId = api.getActivityId();
   const form = document.querySelector('#activity-edit-form');
   const errorBox = document.querySelector('#activity-error');
   const submitButton = form.querySelector('button[type="submit"]');
+
+  LocationPicker.init({
+    form,
+    searchForm: document.querySelector('#location-search-form'),
+    queryInput: document.querySelector('#location-search'),
+    results: document.querySelector('#location-results'),
+    status: document.querySelector('#location-search-status'),
+  });
 
   function toLocalDateTime(value) {
     const date = new Date(value);
@@ -80,9 +88,7 @@
 
     try {
       await api.putJson(`/activities/${activityId}`, payload);
-      globalThis.location.assign(
-        `activity.html?id=${encodeURIComponent(activityId)}`,
-      );
+      globalThis.location.assign(`activity.html?id=${encodeURIComponent(activityId)}`);
     } catch (error) {
       errorBox.textContent = error.message || 'Unable to save activity.';
     } finally {

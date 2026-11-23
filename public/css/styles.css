@@ -327,6 +327,51 @@ legend {
   gap: 0.5rem;
   margin-top: 1.25rem;
 }
+
+.location-search {
+  margin: -0.25rem 0 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.location-search-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.location-search-form input {
+  flex: 1;
+}
+
+.location-results {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+.location-result {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.location-result:hover,
+.location-result:focus-visible {
+  background: var(--accent-soft);
+}
+
+.location-result-address {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
 main.medium > .card > h1 {
   margin-bottom: 1.25rem;
 }
@@ -571,10 +616,34 @@ main.medium > form {
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 720px) {
+@media (max-width: 800px) {
+  .site-header .inner,
+  main,
+  .site-footer {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .feed,
   .detail-grid,
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .toolbar input {
+    flex: 1 0 100%;
+  }
+
+  .toolbar .btn {
+    flex: 1 1 calc(50% - 0.25rem);
+  }
+
+  .page-head > .btn {
+    width: 100%;
   }
 }
 .toolbar input {
@@ -681,6 +750,22 @@ main.medium > form {
   margin-bottom: 0.5rem;
 }
 @media (max-width: 480px) {
+  #activity-form .form-actions,
+  #activity-edit-form .form-actions {
+    flex-direction: column;
+  }
+
+  #activity-form .form-actions .btn,
+  #activity-edit-form .form-actions .btn {
+    width: 100%;
+  }
+
+  #activity-form fieldset,
+  #activity-edit-form fieldset {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
   .comment-replies {
     padding-left: 0.65rem;
     margin-left: 0;
